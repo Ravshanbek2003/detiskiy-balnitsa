@@ -1,0 +1,6 @@
+export * from './auth/auth.validator'
+export * from './department/department.validator'
+export * from './patient/patient.validator'
+export * from './specialization/specialization.validator'
+export * from './user/user.validator'
+export * from './validator'
