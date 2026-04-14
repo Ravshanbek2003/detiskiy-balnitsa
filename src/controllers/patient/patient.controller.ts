@@ -28,6 +28,7 @@ export class PatientController {
          payment_method,
          payment_status,
       } = req.body as PatientDocumentI
+      const created_by = req.user?._id
 
       // Check if check_number already exists
       const existing = await PatientModel.findOne({ check_number }).lean()
@@ -102,6 +103,7 @@ export class PatientController {
          amount,
          payment_method,
          payment_status,
+         created_by,
       })
 
       res.status(StatusCodes.CREATED).json({

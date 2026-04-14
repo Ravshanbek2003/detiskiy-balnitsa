@@ -5,6 +5,7 @@ import { specializationRouter } from './specialization/specialization.route'
 import { uploadRouter } from './upload/upload.route'
 import { userRouter } from './user/user.route'
 import { workerRouter } from './worker/worker.route'
+import { mainRouter } from './main/main.route'
 
 export const Routes = [
    { path: '/auth', router: authRouter },
@@ -14,4 +15,5 @@ export const Routes = [
    { path: '/upload', router: uploadRouter },
    { path: '/user', router: userRouter },
    { path: '/worker', router: workerRouter },
+   { path: '/main', router: mainRouter },
 ]

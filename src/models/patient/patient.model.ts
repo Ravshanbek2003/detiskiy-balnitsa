@@ -21,6 +21,7 @@ export interface PatientDocumentI {
    amount: number
    payment_method: PatientPaymentMethodType
    payment_status?: 'paid' | 'unpaid'
+   created_by?: Types.ObjectId
    readonly created_at: Date
    readonly updated_at: Date
 }
@@ -31,12 +32,14 @@ const documentSchema = new Schema<PatientDocumentI>(
       check_number: { type: String, required: true, unique: true },
       department_id: {
          type: Schema.Types.ObjectId,
-         ref: CollectionConstants.DEPARTMENT, required: true
+         ref: CollectionConstants.DEPARTMENT,
+         required: true,
       },
       department_name: { type: String },
       specialization_id: {
          type: Schema.Types.ObjectId,
-         ref: CollectionConstants.SPECIALIZATION, required: true
+         ref: CollectionConstants.SPECIALIZATION,
+         required: true,
       },
       specialization_name: { type: String },
       doctor: { type: Schema.Types.ObjectId, ref: CollectionConstants.WORKER },
@@ -52,6 +55,10 @@ const documentSchema = new Schema<PatientDocumentI>(
       payment_status: {
          type: String,
          enum: ['paid', 'unpaid'],
+      },
+      created_by: {
+         type: Schema.Types.ObjectId,
+         ref: CollectionConstants.USER,
       },
    },
    {
