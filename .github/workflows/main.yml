@@ -1,0 +1,62 @@
+name: CD
+
+on:
+   push:
+      branches:
+         - main
+   workflow_dispatch:
+
+concurrency:
+   group: production-deploy
+   cancel-in-progress: true
+
+jobs:
+   deploy:
+      name: Deploy to server
+      runs-on: ubuntu-latest
+      permissions:
+         contents: read
+      steps:
+         - name: Checkout code
+           uses: actions/checkout@v4
+
+         - name: Validate deploy secrets
+           env:
+              HOST: ${{ secrets.HOST }}
+              USERNAME: ${{ secrets.USERNAME }}
+              KEY: ${{ secrets.KEY }}
+           run: |
+              missing=0
+
+              for secret_name in HOST USERNAME KEY; do
+                if [ -z "${!secret_name}" ]; then
+                  echo "::error::Missing required secret: ${secret_name}"
+                  missing=1
+                fi
+              done
+
+              if [ "$missing" -ne 0 ]; then
+                exit 1
+              fi
+
+         - name: Deploy to server
+           uses: appleboy/ssh-action@v1.0.0
+           with:
+              host: ${{ secrets.HOST }}
+              username: ${{ secrets.USERNAME }}
+              key: ${{ secrets.KEY }}
+              port: ${{ secrets.PORT || 22 }}
+              timeout: 60s
+              command_timeout: 15m
+              debug: true
+              script_stop: true
+              script: |
+                 set -e
+
+                 cd ~/detiskiy-balnitsa
+                 git fetch origin
+                 git reset --hard origin/main
+                 yarn install --frozen-lockfile --non-interactive
+                 yarn build
+                 pm2 restart ecosystem.config.js --update-env || pm2 start ecosystem.config.js
+                 pm2 save

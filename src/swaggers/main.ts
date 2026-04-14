@@ -12,7 +12,7 @@ const Swagger: SwaggerType = {
    },
    servers: [
       {
-         url: '/',
+         url: 'http://localhost:8077',
          description: 'Current server',
       },
    ],
@@ -30,8 +30,7 @@ const Swagger: SwaggerType = {
    paths: {},
 }
 
-const normalizePath = (value: string): string =>
-   value.replace(/^\/+|\/+$/g, '')
+const normalizePath = (value: string): string => value.replace(/^\/+|\/+$/g, '')
 
 const addSwaggerEndpoint = (
    swagger: SwaggerType,
