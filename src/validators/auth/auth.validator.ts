@@ -2,21 +2,12 @@ import { body } from 'express-validator'
 
 export class AuthValidator {
    public static login = () => [
-      body().custom(value => {
-         const login = value?.login || value?.phone
-
-         if (!login || typeof login !== 'string' || !login.trim()) {
-            throw new Error('Login kiritilishi shart.')
-         }
-
-         if (!/^\+998\d{9}$/.test(login.trim())) {
-            throw new Error(
-               "Login hozircha telefon raqami ko'rinishida bo'lishi kerak: +998XXXXXXXXX",
-            )
-         }
-
-         return true
-      }),
+      body('login')
+         .trim()
+         .notEmpty()
+         .withMessage('Login kiritilishi shart.')
+         .isString()
+         .withMessage("Login matn bo'lishi kerak."),
 
       body('password')
          .trim()
@@ -28,7 +19,7 @@ export class AuthValidator {
          .withMessage("Parol 4 dan 16 gacha belgi bo'lishi kerak."),
    ]
 
-   public static signUpAdmin = () => [
+   public static signUpAccountant = () => [
       body('fullname')
          .trim()
          .notEmpty()
@@ -36,10 +27,18 @@ export class AuthValidator {
          .isString()
          .withMessage("Ism matn bo'lishi kerak."),
 
-      body('phone')
+      body('login')
          .trim()
          .notEmpty()
-         .withMessage('Telefon raqami kiritilishi shart.')
+         .withMessage('Login kiritilishi shart.')
+         .isString()
+         .withMessage("Login matn bo'lishi kerak."),
+
+      body('phone')
+         .optional()
+         .trim()
+         .notEmpty()
+         .withMessage("Telefon raqami bo'sh bo'lishi mumkin emas.")
          .isString()
          .withMessage("Telefon raqami matn bo'lishi kerak.")
          .matches(/^\+998\d{9}$/)
@@ -70,6 +69,14 @@ export class AuthValidator {
          .withMessage("Ism bo'sh bo'lishi mumkin emas.")
          .isString()
          .withMessage("Ism matn bo'lishi kerak."),
+
+      body('login')
+         .optional()
+         .trim()
+         .notEmpty()
+         .withMessage("Login bo'sh bo'lishi mumkin emas.")
+         .isString()
+         .withMessage("Login matn bo'lishi kerak."),
 
       body('phone')
          .optional()

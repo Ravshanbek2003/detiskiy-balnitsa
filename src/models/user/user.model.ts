@@ -7,11 +7,11 @@ export interface UserDocumentI {
    _id?: Types.ObjectId
    fullname: string
    image?: string
-   phone: string
+   phone?: string
    role: RoleConstantsType
+   login: string
    password: string
    status: 'active' | 'blocked' | 'deleted'
-   last_login?: Date
    readonly created_at: Date
    readonly updated_at: Date
 }
@@ -19,7 +19,8 @@ export interface UserDocumentI {
 const documentSchema = new Schema<UserDocumentI>(
    {
       fullname: { type: String, required: true },
-      phone: { type: String, required: true, unique: true },
+      phone: { type: String },
+      login: { type: String, required: true },
       role: {
          type: String,
          required: true,
@@ -33,7 +34,6 @@ const documentSchema = new Schema<UserDocumentI>(
          default: 'active',
       },
       image: { type: String },
-      last_login: { type: Date },
    },
    {
       versionKey: false,

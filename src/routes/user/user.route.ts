@@ -1,18 +1,16 @@
 import { Router } from 'express'
 
-import { RoleConstants, getEndpointRoles } from '../../constants'
+import { RoleConstants } from '../../constants'
 import { UserController } from '../../controllers'
 import { authMiddleware, roleMiddleware } from '../../utils'
 import { UserValidator, validate } from '../../validators'
 
 const userRouter = Router()
 
-// Apply cache middleware to all routes in this router
-
 userRouter.post(
    '/create',
    authMiddleware,
-   roleMiddleware([RoleConstants.ADMIN]),
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
    UserValidator.create(),
    validate,
    UserController.create,
@@ -20,7 +18,7 @@ userRouter.post(
 userRouter.put(
    '/update/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ADMIN]),
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
    UserValidator.update(),
    validate,
    UserController.update,
@@ -28,7 +26,7 @@ userRouter.put(
 userRouter.get(
    '/get-all',
    authMiddleware,
-   roleMiddleware([RoleConstants.ADMIN]),
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
    UserValidator.getAll(),
    validate,
    UserController.getAll,
@@ -36,7 +34,7 @@ userRouter.get(
 userRouter.get(
    '/get-one/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ADMIN]),
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
    UserValidator.mongoId(),
    validate,
    UserController.getById,
@@ -44,7 +42,7 @@ userRouter.get(
 userRouter.patch(
    '/block/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ADMIN]),
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
    UserValidator.mongoId(),
    validate,
    UserController.toggleBlock,
@@ -52,15 +50,10 @@ userRouter.patch(
 userRouter.delete(
    '/delete/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ADMIN]),
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
    UserValidator.mongoId(),
    validate,
    UserController.delete,
-)
-userRouter.patch(
-   '/update-last-login',
-   authMiddleware,
-   UserController.updateLastLogin,
 )
 
 export { userRouter }

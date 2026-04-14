@@ -17,11 +17,11 @@ import {
 
 export class AuthController {
    public static login = asyncHandler(async (req, res) => {
-      const login = (req.body.login || req.body.phone || '').trim()
+      const login = (req.body.login || '').trim()
       const { password } = req.body
 
       const user = await UserModel.findOne({
-         phone: login,
+         login,
          status: { $ne: StatusConstants.DELETED },
       })
          .select('+password')
@@ -71,14 +71,15 @@ export class AuthController {
                _id: user._id,
                fullname: user.fullname,
                phone: user.phone,
+               login: user.login,
                role: user.role,
             },
          },
       })
    })
 
-   public static signUpAdmin = asyncHandler(async (req, res) => {
-      const { fullname, phone, password, reg_key } = req.body
+   public static signUpAccountant = asyncHandler(async (req, res) => {
+      const { fullname, login, phone, password, reg_key } = req.body
 
       if (reg_key !== REG_KEY) {
          throw new HttpException(
@@ -88,43 +89,40 @@ export class AuthController {
          )
       }
 
-      const [existingAdmin, existingPhone] = await Promise.all([
-         UserModel.findOne({
-            role: RoleConstants.ADMIN,
-            status: { $ne: StatusConstants.DELETED },
-         }).exec(),
-         UserModel.findOne({ phone }).exec(),
-      ])
-
-      if (existingAdmin) {
+      const existingLogin = await UserModel.findOne({ login }).exec()
+      if (existingLogin) {
          throw new HttpException(
             StatusCodes.BAD_REQUEST,
             ReasonPhrases.BAD_REQUEST,
-            ErrorMessages.ADMIN_EXISTS,
+            'Bu login allaqachon mavjud',
          )
       }
 
-      if (existingPhone) {
-         throw new HttpException(
-            StatusCodes.BAD_REQUEST,
-            ReasonPhrases.BAD_REQUEST,
-            ErrorMessages.PHONE_EXISTS,
-         )
+      if (phone) {
+         const existingPhone = await UserModel.findOne({ phone }).exec()
+         if (existingPhone) {
+            throw new HttpException(
+               StatusCodes.BAD_REQUEST,
+               ReasonPhrases.BAD_REQUEST,
+               ErrorMessages.PHONE_EXISTS,
+            )
+         }
       }
 
       const hashedPassword = await HashingHelpers.generatePassword(password)
 
       await UserModel.create({
          fullname,
+         login,
          phone,
-         role: RoleConstants.ADMIN,
+         role: RoleConstants.ACCOUNTANT,
          password: hashedPassword,
          status: StatusConstants.ACTIVE,
       })
 
       res.status(StatusCodes.CREATED).json({
          success: true,
-         message: SuccessMessages.ADMIN_CREATED,
+         message: 'Accountant muvaffaqiyatli yaratildi',
       })
    })
 
@@ -134,16 +132,33 @@ export class AuthController {
 
    public static updateMe = asyncHandler(async (req, res) => {
       const user = req.user
-      const { fullname, phone, image } = req.body
+      const { fullname, login, phone, image } = req.body
 
       const updateData: {
          fullname?: string
+         login?: string
          phone?: string
          image?: string
       } = {}
 
       if (fullname) updateData.fullname = fullname
       if (image !== undefined) updateData.image = image
+
+      if (login && login !== user?.login) {
+         const existing = await UserModel.findOne({
+            login,
+            _id: { $ne: user?._id },
+         }).exec()
+
+         if (existing) {
+            throw new HttpException(
+               StatusCodes.BAD_REQUEST,
+               ReasonPhrases.BAD_REQUEST,
+               'Bu login allaqachon band',
+            )
+         }
+         updateData.login = login
+      }
 
       if (phone && phone !== user?.phone) {
          const existing = await UserModel.findOne({
@@ -158,7 +173,6 @@ export class AuthController {
                ErrorMessages.PHONE_EXISTS,
             )
          }
-
          updateData.phone = phone
       }
 

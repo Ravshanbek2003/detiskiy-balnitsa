@@ -12,32 +12,36 @@ import { regexEscape } from '../../utils/regex-escape'
 
 export class UserController {
    public static create = asyncHandler(async (req, res) => {
-      const { fullname, phone, password, role } = req.body as UserDocumentI & {
-         password: string
-      }
+      const { fullname, login, phone, password, role } =
+         req.body as UserDocumentI & {
+            password: string
+         }
 
-      if (role === RoleConstants.ADMIN) {
+      const existingLogin = await UserModel.findOne({ login }).lean()
+      if (existingLogin) {
          throw new HttpException(
             StatusCodes.BAD_REQUEST,
             ReasonPhrases.BAD_REQUEST,
-            'Admin roli orqali foydalanuvchi yaratish mumkin emas!',
+            'Bu login allaqachon mavjud',
          )
       }
 
-      const existing = await UserModel.findOne({ phone }).lean()
-
-      if (existing) {
-         throw new HttpException(
-            StatusCodes.BAD_REQUEST,
-            ReasonPhrases.BAD_REQUEST,
-            ErrorMessages.PHONE_EXISTS,
-         )
+      if (phone) {
+         const existingPhone = await UserModel.findOne({ phone }).lean()
+         if (existingPhone) {
+            throw new HttpException(
+               StatusCodes.BAD_REQUEST,
+               ReasonPhrases.BAD_REQUEST,
+               ErrorMessages.PHONE_EXISTS,
+            )
+         }
       }
 
       const hashed = await HashingHelpers.generatePassword(password)
 
       await UserModel.create({
          fullname,
+         login,
          phone,
          password: hashed,
          role,
@@ -65,6 +69,7 @@ export class UserController {
          const escaped = regexEscape(search)
          queryObj.$or = [
             { fullname: { $regex: escaped, $options: 'i' } },
+            { login: { $regex: escaped, $options: 'i' } },
             { phone: { $regex: escaped, $options: 'i' } },
          ]
       }
@@ -83,7 +88,8 @@ export class UserController {
          if (endDate) queryObj.created_at.$lte = new Date(endDate)
       }
 
-      const projection = '_id fullname phone role status last_login created_at'
+      const projection =
+         '_id fullname login phone role status last_login created_at'
 
       const [result, total] = await Promise.all([
          UserModel.find(queryObj)
@@ -132,17 +138,10 @@ export class UserController {
 
    public static update = asyncHandler(async (req, res) => {
       const { id } = req.params as any
-      const { fullname, phone, role, password } = req.body as UserDocumentI & {
-         password?: string
-      }
-
-      if (role === RoleConstants.ADMIN) {
-         throw new HttpException(
-            StatusCodes.BAD_REQUEST,
-            ReasonPhrases.BAD_REQUEST,
-            'Admin roli orqali foydalanuvchini yangilash mumkin emas!',
-         )
-      }
+      const { fullname, login, phone, role, password } =
+         req.body as UserDocumentI & {
+            password?: string
+         }
 
       const user = await UserModel.findOne({
          _id: id,
@@ -162,6 +161,22 @@ export class UserController {
       const updateData: any = {}
 
       if (fullname) updateData.fullname = fullname
+
+      if (login && login !== user.login) {
+         const existing = await UserModel.findOne({
+            login,
+            _id: { $ne: id },
+         }).lean()
+
+         if (existing) {
+            throw new HttpException(
+               StatusCodes.BAD_REQUEST,
+               ReasonPhrases.BAD_REQUEST,
+               'Bu login allaqachon mavjud',
+            )
+         }
+         updateData.login = login
+      }
 
       if (phone && phone !== user.phone) {
          const existing = await UserModel.findOne({
@@ -251,28 +266,6 @@ export class UserController {
       res.status(StatusCodes.OK).json({
          success: true,
          message: SuccessMessages.USER_DELETED,
-      })
-   })
-
-   // PATCH /user/update-last-login
-   public static updateLastLogin = asyncHandler(async (req, res) => {
-      const userId = req.user?._id
-
-      if (!userId) {
-         throw new HttpException(
-            StatusCodes.UNAUTHORIZED,
-            ReasonPhrases.UNAUTHORIZED,
-            "Avtorizatsiyadan o'tilmagan",
-         )
-      }
-
-      await UserModel.findByIdAndUpdate(userId, {
-         last_login: new Date(),
-      })
-
-      res.status(StatusCodes.OK).json({
-         success: true,
-         message: 'Oxirgi kirish vaqti yangilandi',
       })
    })
 }
