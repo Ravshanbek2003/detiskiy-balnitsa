@@ -7,7 +7,8 @@ const UserSwagger = {
             post: {
                tags: ['User'],
                summary:
-                  'Yangi foydalanuvchi (manager) yaratish — Ruxsat: ADMIN',
+                  'Yangi foydalanuvchi yaratish — Ruxsat: ACCOUNTANT',
+               security: [{ bearerAuth: [] }],
                requestBody: {
                   required: true,
                   content: {
@@ -19,6 +20,10 @@ const UserSwagger = {
                                  type: 'string',
                                  example: 'Jasur Karimov',
                               },
+                              login: {
+                                 type: 'string',
+                                 example: 'jasur_01',
+                              },
                               phone: {
                                  type: 'string',
                                  example: '+998901234567',
@@ -26,11 +31,11 @@ const UserSwagger = {
                               password: { type: 'string', example: 'P@ssw0rd' },
                               role: {
                                  type: 'string',
-                                 example: 'MANAGER',
-                                 enum: ['ADMIN', 'MANAGER'],
+                                 example: 'CASHIER',
+                                 enum: ['ACCOUNTANT', 'CASHIER'],
                               },
                            },
-                           required: ['fullname', 'phone', 'password', 'role'],
+                           required: ['fullname', 'login', 'password', 'role'],
                         },
                      },
                   },
@@ -41,7 +46,7 @@ const UserSwagger = {
                   },
                   '400': {
                      description:
-                        'Validatsiya xatoligi yoki telefon raqam band',
+                        'Validatsiya xatoligi yoki login/telefon raqam band',
                   },
                },
             },
@@ -52,7 +57,8 @@ const UserSwagger = {
          body: {
             get: {
                tags: ['User'],
-               summary: "Foydalanuvchilar ro'yxatini olish — Ruxsat: ADMIN",
+               summary: "Foydalanuvchilar ro'yxatini olish — Ruxsat: ACCOUNTANT",
+               security: [{ bearerAuth: [] }],
                parameters: [
                   {
                      name: 'page',
@@ -74,8 +80,8 @@ const UserSwagger = {
                      in: 'query',
                      schema: {
                         type: 'string',
-                        example: 'MANAGER',
-                        enum: ['ADMIN', 'MANAGER'],
+                        example: 'CASHIER',
+                        enum: ['ACCOUNTANT', 'CASHIER'],
                      },
                   },
                   {
@@ -113,52 +119,6 @@ const UserSwagger = {
                responses: {
                   '200': {
                      description: "Foydalanuvchilar ro'yxati",
-                     content: {
-                        'application/json': {
-                           schema: {
-                              type: 'object',
-                              properties: {
-                                 success: { type: 'boolean', example: true },
-                                 data: {
-                                    type: 'array',
-                                    items: {
-                                       type: 'object',
-                                       properties: {
-                                          _id: { type: 'string' },
-                                          fullname: { type: 'string' },
-                                          phone: { type: 'string' },
-                                          role: { type: 'string' },
-                                          status: { type: 'string' },
-                                          last_login: {
-                                             type: 'string',
-                                             format: 'date-time',
-                                          },
-                                          created_at: {
-                                             type: 'string',
-                                             format: 'date-time',
-                                          },
-                                       },
-                                    },
-                                 },
-                                 pagination: {
-                                    type: 'object',
-                                    properties: {
-                                       page: { type: 'integer' },
-                                       limit: { type: 'integer' },
-                                       total_items: { type: 'integer' },
-                                       total_pages: { type: 'integer' },
-                                       next_page: {
-                                          type: ['integer', 'null'],
-                                       },
-                                       prev_page: {
-                                          type: ['integer', 'null'],
-                                       },
-                                    },
-                                 },
-                              },
-                           },
-                        },
-                     },
                   },
                },
             },
@@ -169,7 +129,8 @@ const UserSwagger = {
          body: {
             get: {
                tags: ['User'],
-               summary: "Foydalanuvchini ID bo'yicha olish — Ruxsat: ADMIN",
+               summary: "Foydalanuvchini ID bo'yicha olish — Ruxsat: ACCOUNTANT",
+               security: [{ bearerAuth: [] }],
                parameters: [
                   {
                      name: 'id',
@@ -184,36 +145,7 @@ const UserSwagger = {
                responses: {
                   '200': {
                      description: "Foydalanuvchi ma'lumotlari",
-                     content: {
-                        'application/json': {
-                           schema: {
-                              type: 'object',
-                              properties: {
-                                 success: { type: 'boolean', example: true },
-                                 data: {
-                                    type: 'object',
-                                    properties: {
-                                       _id: { type: 'string' },
-                                       fullname: { type: 'string' },
-                                       phone: { type: 'string' },
-                                       role: { type: 'string' },
-                                       status: { type: 'string' },
-                                       last_login: {
-                                          type: 'string',
-                                          format: 'date-time',
-                                       },
-                                       created_at: {
-                                          type: 'string',
-                                          format: 'date-time',
-                                       },
-                                    },
-                                 },
-                              },
-                           },
-                        },
-                     },
                   },
-                  '404': { description: 'Foydalanuvchi topilmadi' },
                },
             },
          },
@@ -223,7 +155,8 @@ const UserSwagger = {
          body: {
             put: {
                tags: ['User'],
-               summary: 'Foydalanuvchini yangilash — Ruxsat: ADMIN',
+               summary: "Foydalanuvchini tahrirlash",
+               security: [{ bearerAuth: [] }],
                parameters: [
                   {
                      name: 'id',
@@ -231,7 +164,6 @@ const UserSwagger = {
                      required: true,
                      schema: {
                         type: 'string',
-                        example: '64b8f1a2c3d4e5f6a7b8c9d0',
                      },
                   },
                ],
@@ -243,15 +175,13 @@ const UserSwagger = {
                            type: 'object',
                            properties: {
                               fullname: { type: 'string' },
-                              phone: {
-                                 type: 'string',
-                                 example: '+998901234567',
-                              },
+                              login: { type: 'string' },
+                              phone: { type: 'string' },
+                              password: { type: 'string' },
                               role: {
                                  type: 'string',
-                                 enum: ['ADMIN', 'MANAGER'],
+                                 enum: ['ACCOUNTANT', 'CASHIER'],
                               },
-                              password: { type: 'string' },
                            },
                         },
                      },
@@ -259,41 +189,8 @@ const UserSwagger = {
                },
                responses: {
                   '200': {
-                     description: 'Foydalanuvchi muvaffaqiyatli yangilandi',
+                     description: "Foydalanuvchi ma'lumotlari yangilandi",
                   },
-                  '400': {
-                     description:
-                        'Validatsiya xatoligi yoki telefon raqam band',
-                  },
-                  '404': { description: 'Foydalanuvchi topilmadi' },
-               },
-            },
-         },
-      },
-      {
-         path: 'block/{id}',
-         body: {
-            patch: {
-               tags: ['User'],
-               summary:
-                  'Foydalanuvchini bloklash/blokdan chiqarish — Ruxsat: ADMIN',
-               parameters: [
-                  {
-                     name: 'id',
-                     in: 'path',
-                     required: true,
-                     schema: {
-                        type: 'string',
-                        example: '64b8f1a2c3d4e5f6a7b8c9d0',
-                     },
-                  },
-               ],
-               responses: {
-                  '200': {
-                     description:
-                        'Foydalanuvchi bloklandi yoki blokdan chiqarildi',
-                  },
-                  '404': { description: 'Foydalanuvchi topilmadi' },
                },
             },
          },
@@ -303,7 +200,8 @@ const UserSwagger = {
          body: {
             delete: {
                tags: ['User'],
-               summary: "Foydalanuvchini o'chirish — Ruxsat: ADMIN",
+               summary: "Foydalanuvchini o'chirish",
+               security: [{ bearerAuth: [] }],
                parameters: [
                   {
                      name: 'id',
@@ -311,46 +209,38 @@ const UserSwagger = {
                      required: true,
                      schema: {
                         type: 'string',
-                        example: '64b8f1a2c3d4e5f6a7b8c9d0',
                      },
                   },
                ],
                responses: {
                   '200': {
-                     description: "Foydalanuvchi muvaffaqiyatli o'chirildi",
+                     description: "Foydalanuvchi o'chirildi",
                   },
-                  '404': { description: 'Foydalanuvchi topilmadi' },
                },
             },
          },
       },
       {
-         path: 'update-last-login',
+         path: 'block/{id}',
          body: {
             patch: {
                tags: ['User'],
-               summary:
-                  "Foydalanuvchi (admin o'zi) platformaga kirganida oxirgi kirish vaqtini yangilash",
+               summary: "Foydalanuvchini blocklash / blockdan chiqarish",
                security: [{ bearerAuth: [] }],
-               responses: {
-                  '200': {
-                     description: 'Kirish vaqti muvaffaqiyatli yangilandi',
-                     content: {
-                        'application/json': {
-                           schema: {
-                              type: 'object',
-                              properties: {
-                                 success: { type: 'boolean', example: true },
-                                 message: {
-                                    type: 'string',
-                                    example: 'Oxirgi kirish vaqti yangilandi',
-                                 },
-                              },
-                           },
-                        },
+               parameters: [
+                  {
+                     name: 'id',
+                     in: 'path',
+                     required: true,
+                     schema: {
+                        type: 'string',
                      },
                   },
-                  '401': { description: "Avtorizatsiyadan o'tilmagan" },
+               ],
+               responses: {
+                  '200': {
+                     description: "Status o'zgardi",
+                  },
                },
             },
          },

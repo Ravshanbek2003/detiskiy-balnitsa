@@ -6,7 +6,7 @@ export const TariffSwagger = {
          body: {
             get: {
                tags: ['Tariff'],
-               summary: 'Barcha tariflarni olish — Ruxsat: ADMIN',
+               summary: 'Barcha tariflarni olish — Ruxsat: ACCOUNTANT',
                security: [{ bearerAuth: [] }],
                parameters: [
                   {
@@ -129,7 +129,7 @@ export const TariffSwagger = {
          body: {
             get: {
                tags: ['Tariff'],
-               summary: 'Bitta tarifni olish — Ruxsat: ADMIN',
+               summary: 'Bitta tarifni olish — Ruxsat: ACCOUNTANT',
                security: [{ bearerAuth: [] }],
                parameters: [
                   {
@@ -190,7 +190,7 @@ export const TariffSwagger = {
             put: {
                tags: ['Tariff'],
                summary:
-                  "Tarifni yangilash — PENDING bo'lsa update, aks holda yangi yaratadi — Ruxsat: ADMIN",
+                  "Tarifni yangilash — PENDING bo'lsa update, aks holda yangi yaratadi — Ruxsat: ACCOUNTANT",
                security: [{ bearerAuth: [] }],
                parameters: [
                   {

@@ -16,9 +16,9 @@ const AuthSwagger = {
                            properties: {
                               login: {
                                  type: 'string',
-                                 example: '+998901234567',
+                                 example: 'accountant_login',
                                  description:
-                                    "Hozircha login sifatida telefon raqami ishlatiladi",
+                                    "Foydalanuvchi logini",
                               },
                               password: {
                                  type: 'string',
@@ -42,11 +42,11 @@ const AuthSwagger = {
          },
       },
       {
-         path: 'sign-up/admin',
+         path: 'sign-up/accountant',
          body: {
             post: {
                tags: ['Auth'],
-               summary: 'Create first admin user',
+               summary: 'Create first accountant user',
                requestBody: {
                   required: true,
                   content: {
@@ -57,6 +57,10 @@ const AuthSwagger = {
                               fullname: {
                                  type: 'string',
                                  example: 'Sardor Aliyev',
+                              },
+                              login: {
+                                 type: 'string',
+                                 example: 'accountant_01',
                               },
                               phone: {
                                  type: 'string',
@@ -71,17 +75,17 @@ const AuthSwagger = {
                                  example: 'registrationkey789',
                               },
                            },
-                           required: ['fullname', 'phone', 'password', 'reg_key'],
+                           required: ['fullname', 'login', 'password', 'reg_key'],
                         },
                      },
                   },
                },
                responses: {
                   '201': {
-                     description: 'Admin created successfully',
+                     description: 'Accountant created successfully',
                   },
                   '400': {
-                     description: 'Invalid data or admin already exists',
+                     description: 'Invalid data or login already exists',
                   },
                },
             },
@@ -120,6 +124,7 @@ const AuthSwagger = {
                            type: 'object',
                            properties: {
                               fullname: { type: 'string' },
+                              login: { type: 'string', example: 'new_login' },
                               phone: {
                                  type: 'string',
                                  example: '+998901234567',
