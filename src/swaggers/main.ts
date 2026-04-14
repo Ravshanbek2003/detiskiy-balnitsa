@@ -15,6 +15,10 @@ const Swagger: SwaggerType = {
          url: 'http://localhost:8077',
          description: 'Current server',
       },
+      {
+         url: 'https://balnisa.jayronmed.uz',
+         description: 'Production server',
+      },
    ],
    components: {
       schemas: {},
