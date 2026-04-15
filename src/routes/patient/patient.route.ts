@@ -10,7 +10,7 @@ export const patientRouter = Router()
 patientRouter.post(
    '/create',
    authMiddleware,
-   roleMiddleware([RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.CASHIER, RoleConstants.ACCOUNTANT]),
    PatientValidator.create(),
    validate,
    PatientController.create,
@@ -19,7 +19,7 @@ patientRouter.post(
 patientRouter.put(
    '/update/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.CASHIER, RoleConstants.ACCOUNTANT]),
    PatientValidator.update(),
    validate,
    PatientController.update,
@@ -28,7 +28,7 @@ patientRouter.put(
 patientRouter.get(
    '/get-all',
    authMiddleware,
-   roleMiddleware([RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.CASHIER, RoleConstants.ACCOUNTANT]),
    PatientValidator.getAll(),
    validate,
    PatientController.getAll,
@@ -37,7 +37,7 @@ patientRouter.get(
 patientRouter.get(
    '/get-one/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.CASHIER, RoleConstants.ACCOUNTANT]),
    PatientValidator.mongoId(),
    validate,
    PatientController.getById,
@@ -46,7 +46,7 @@ patientRouter.get(
 patientRouter.delete(
    '/delete/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.CASHIER, RoleConstants.ACCOUNTANT]),
    PatientValidator.mongoId(),
    validate,
    PatientController.delete,
@@ -55,10 +55,9 @@ patientRouter.delete(
 patientRouter.patch(
    '/update-payment-status/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.CASHIER, RoleConstants.ACCOUNTANT]),
    PatientValidator.updatePaymentStatus(),
    validate,
    PatientController.updatePaymentStatus,
 )
-
-// bu yerda payment_statusni o'zgartirish uchun rote qo'shib ber
+ 

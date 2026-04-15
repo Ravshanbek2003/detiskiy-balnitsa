@@ -1,3 +1,5 @@
+import { SwaggerExamples } from './examples'
+
 export const WorkerSwagger = {
    endpoint: 'worker',
    paths: [
@@ -15,20 +17,52 @@ export const WorkerSwagger = {
                         schema: {
                            type: 'object',
                            properties: {
-                              fullname: { type: 'string', example: 'Alijon Aliyev' },
-                              phone: { type: 'string', example: '+998901234567' },
+                              fullname: {
+                                 type: 'string',
+                                 example: 'Alijon Aliyev',
+                              },
+                              phone: {
+                                 type: 'string',
+                                 example: '+998901234567',
+                              },
                               image: { type: 'string' },
                               department_id: { type: 'string' },
                               specialization_id: { type: 'string' },
-                              worker_type: { type: 'string', enum: ['doctor', 'nurse', 'assistant_nurse'] },
+                              worker_type: {
+                                 type: 'string',
+                                 enum: ['doctor', 'nurse', 'assistant_nurse'],
+                              },
                               notes: { type: 'string' },
                            },
-                           required: ['fullname', 'phone', 'department_id', 'specialization_id', 'worker_type'],
+                           required: [
+                              'fullname',
+                              'phone',
+                              'department_id',
+                              'specialization_id',
+                              'worker_type',
+                           ],
                         },
                      },
                   },
                },
-               responses: { '201': { description: 'Xodim yaratildi' } },
+               responses: {
+                  '201': {
+                     description: 'Xodim yaratildi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.worker.create_success,
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'Validatsiya xatosi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
+                  },
+               },
             },
          },
       },
@@ -43,12 +77,43 @@ export const WorkerSwagger = {
                   { name: 'page', in: 'query', schema: { type: 'integer' } },
                   { name: 'limit', in: 'query', schema: { type: 'integer' } },
                   { name: 'search', in: 'query', schema: { type: 'string' } },
-                  { name: 'worker_type', in: 'query', schema: { type: 'string', enum: ['doctor', 'nurse', 'assistant_nurse'] } },
-                  { name: 'department_id', in: 'query', schema: { type: 'string' } },
-                  { name: 'specialization_id', in: 'query', schema: { type: 'string' } },
-                  { name: 'status', in: 'query', schema: { type: 'string', enum: ['active', 'inactive', 'deleted'] } },
+                  {
+                     name: 'worker_type',
+                     in: 'query',
+                     schema: {
+                        type: 'string',
+                        enum: ['doctor', 'nurse', 'assistant_nurse'],
+                     },
+                  },
+                  {
+                     name: 'department_id',
+                     in: 'query',
+                     schema: { type: 'string' },
+                  },
+                  {
+                     name: 'specialization_id',
+                     in: 'query',
+                     schema: { type: 'string' },
+                  },
+                  {
+                     name: 'status',
+                     in: 'query',
+                     schema: {
+                        type: 'string',
+                        enum: ['active', 'inactive', 'deleted'],
+                     },
+                  },
                ],
-               responses: { '200': { description: 'Xodimlar listi' } },
+               responses: {
+                  '200': {
+                     description: 'Xodimlar listi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.worker.get_all,
+                        },
+                     },
+                  },
+               },
             },
          },
       },
@@ -59,8 +124,32 @@ export const WorkerSwagger = {
                tags: ['Worker'],
                summary: "Xodim ma'lumotini olish — Ruxsat: ACCOUNTANT",
                security: [{ bearerAuth: [] }],
-               parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-               responses: { '200': { description: "Xodim ob'yekti" } },
+               parameters: [
+                  {
+                     name: 'id',
+                     in: 'path',
+                     required: true,
+                     schema: { type: 'string' },
+                  },
+               ],
+               responses: {
+                  '200': {
+                     description: "Xodim ob'yekti",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.worker.get_one,
+                        },
+                     },
+                  },
+                  '404': {
+                     description: 'Xodim topilmadi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
+                  },
+               },
             },
          },
       },
@@ -71,7 +160,14 @@ export const WorkerSwagger = {
                tags: ['Worker'],
                summary: 'Xodimni tahrirlash — Ruxsat: ACCOUNTANT',
                security: [{ bearerAuth: [] }],
-               parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+               parameters: [
+                  {
+                     name: 'id',
+                     in: 'path',
+                     required: true,
+                     schema: { type: 'string' },
+                  },
+               ],
                requestBody: {
                   required: true,
                   content: {
@@ -84,14 +180,38 @@ export const WorkerSwagger = {
                               image: { type: 'string' },
                               department_id: { type: 'string' },
                               specialization_id: { type: 'string' },
-                              worker_type: { type: 'string', enum: ['doctor', 'nurse', 'assistant_nurse'] },
+                              worker_type: {
+                                 type: 'string',
+                                 enum: ['doctor', 'nurse', 'assistant_nurse'],
+                              },
                               notes: { type: 'string' },
                            },
                         },
                      },
                   },
                },
-               responses: { '200': { description: 'Yangilandi' } },
+               responses: {
+                  '200': {
+                     description: 'Yangilandi',
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "Xodim ma'lumotlari muvaffaqiyatli yangilandi",
+                           },
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'Validatsiya xatosi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
+                  },
+               },
             },
          },
       },
@@ -102,8 +222,35 @@ export const WorkerSwagger = {
                tags: ['Worker'],
                summary: "Xodimni o'chirish — Ruxsat: ACCOUNTANT",
                security: [{ bearerAuth: [] }],
-               parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-               responses: { '200': { description: "O'chirildi" } },
+               parameters: [
+                  {
+                     name: 'id',
+                     in: 'path',
+                     required: true,
+                     schema: { type: 'string' },
+                  },
+               ],
+               responses: {
+                  '200': {
+                     description: "O'chirildi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message: "Xodim muvaffaqiyatli o'chirildi",
+                           },
+                        },
+                     },
+                  },
+                  '404': {
+                     description: 'Xodim topilmadi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
+                  },
+               },
             },
          },
       },
@@ -112,10 +259,30 @@ export const WorkerSwagger = {
          body: {
             patch: {
                tags: ['Worker'],
-               summary: 'Xodim statusini o`zgartirish (active <-> inactive) — Ruxsat: ACCOUNTANT',
+               summary:
+                  'Xodim statusini o`zgartirish (active <-> inactive) — Ruxsat: ACCOUNTANT',
                security: [{ bearerAuth: [] }],
-               parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-               responses: { '200': { description: 'Status o`zgardi' } },
+               parameters: [
+                  {
+                     name: 'id',
+                     in: 'path',
+                     required: true,
+                     schema: { type: 'string' },
+                  },
+               ],
+               responses: {
+                  '200': {
+                     description: 'Status o`zgardi',
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message: "Xodim statusi muvaffaqiyatli o'zgardi",
+                           },
+                        },
+                     },
+                  },
+               },
             },
          },
       },

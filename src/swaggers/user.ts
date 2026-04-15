@@ -1,3 +1,5 @@
+import { SwaggerExamples } from './examples'
+
 const UserSwagger = {
    endpoint: 'user',
    paths: [
@@ -6,8 +8,7 @@ const UserSwagger = {
          body: {
             post: {
                tags: ['User'],
-               summary:
-                  'Yangi foydalanuvchi yaratish — Ruxsat: ACCOUNTANT',
+               summary: 'Yangi foydalanuvchi yaratish — Ruxsat: ACCOUNTANT',
                security: [{ bearerAuth: [] }],
                requestBody: {
                   required: true,
@@ -43,10 +44,20 @@ const UserSwagger = {
                responses: {
                   '201': {
                      description: 'Foydalanuvchi muvaffaqiyatli yaratildi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.user.create_success,
+                        },
+                     },
                   },
                   '400': {
                      description:
                         'Validatsiya xatoligi yoki login/telefon raqam band',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
                   },
                },
             },
@@ -57,7 +68,8 @@ const UserSwagger = {
          body: {
             get: {
                tags: ['User'],
-               summary: "Foydalanuvchilar ro'yxatini olish — Ruxsat: ACCOUNTANT",
+               summary:
+                  "Foydalanuvchilar ro'yxatini olish — Ruxsat: ACCOUNTANT",
                security: [{ bearerAuth: [] }],
                parameters: [
                   {
@@ -119,6 +131,11 @@ const UserSwagger = {
                responses: {
                   '200': {
                      description: "Foydalanuvchilar ro'yxati",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.user.get_all,
+                        },
+                     },
                   },
                },
             },
@@ -129,7 +146,8 @@ const UserSwagger = {
          body: {
             get: {
                tags: ['User'],
-               summary: "Foydalanuvchini ID bo'yicha olish — Ruxsat: ACCOUNTANT",
+               summary:
+                  "Foydalanuvchini ID bo'yicha olish — Ruxsat: ACCOUNTANT",
                security: [{ bearerAuth: [] }],
                parameters: [
                   {
@@ -145,6 +163,19 @@ const UserSwagger = {
                responses: {
                   '200': {
                      description: "Foydalanuvchi ma'lumotlari",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.user.get_one,
+                        },
+                     },
+                  },
+                  '404': {
+                     description: 'Foydalanuvchi topilmadi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },
@@ -155,7 +186,7 @@ const UserSwagger = {
          body: {
             put: {
                tags: ['User'],
-               summary: "Foydalanuvchini tahrirlash",
+               summary: 'Foydalanuvchini tahrirlash',
                security: [{ bearerAuth: [] }],
                parameters: [
                   {
@@ -190,6 +221,23 @@ const UserSwagger = {
                responses: {
                   '200': {
                      description: "Foydalanuvchi ma'lumotlari yangilandi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "Foydalanuvchi ma'lumotlari muvaffaqiyatli yangilandi",
+                           },
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'Validatsiya xatosi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
                   },
                },
             },
@@ -215,6 +263,23 @@ const UserSwagger = {
                responses: {
                   '200': {
                      description: "Foydalanuvchi o'chirildi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "Foydalanuvchi muvaffaqiyatli o'chirildi",
+                           },
+                        },
+                     },
+                  },
+                  '404': {
+                     description: 'Foydalanuvchi topilmadi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },
@@ -225,7 +290,7 @@ const UserSwagger = {
          body: {
             patch: {
                tags: ['User'],
-               summary: "Foydalanuvchini blocklash / blockdan chiqarish",
+               summary: 'Foydalanuvchini blocklash / blockdan chiqarish',
                security: [{ bearerAuth: [] }],
                parameters: [
                   {
@@ -240,6 +305,15 @@ const UserSwagger = {
                responses: {
                   '200': {
                      description: "Status o'zgardi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "Foydalanuvchi statusi muvaffaqiyatli o'zgardi",
+                           },
+                        },
+                     },
                   },
                },
             },

@@ -1,3 +1,5 @@
+import { SwaggerExamples } from './examples'
+
 export const SpecializationSwagger = {
    endpoint: 'specialization',
    paths: [
@@ -60,9 +62,20 @@ export const SpecializationSwagger = {
                responses: {
                   '201': {
                      description: "Yo'nalish muvaffaqiyatli yaratildi",
+                     content: {
+                        'application/json': {
+                           example:
+                              SwaggerExamples.specialization.create_success,
+                        },
+                     },
                   },
                   '400': {
                      description: 'Validatsiya xatoligi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
                   },
                },
             },
@@ -104,6 +117,11 @@ export const SpecializationSwagger = {
                responses: {
                   '200': {
                      description: "Yo'nalishlar ro'yxati",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.specialization.get_all,
+                        },
+                     },
                   },
                },
             },
@@ -126,9 +144,19 @@ export const SpecializationSwagger = {
                responses: {
                   '200': {
                      description: "Yo'nalish topildi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.specialization.get_one,
+                        },
+                     },
                   },
                   '404': {
                      description: "Yo'nalish topilmadi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },
@@ -195,9 +223,31 @@ export const SpecializationSwagger = {
                responses: {
                   '200': {
                      description: "Yo'nalish muvaffaqiyatli yangilandi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "Yo'nalish ma'lumotlari muvaffaqiyatli yangilandi",
+                           },
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'Validatsiya xatoligi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
                   },
                   '404': {
                      description: "Yo'nalish topilmadi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },
@@ -220,9 +270,22 @@ export const SpecializationSwagger = {
                responses: {
                   '200': {
                      description: "Yo'nalish o'chirildi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message: "Yo'nalish muvaffaqiyatli o'chirildi",
+                           },
+                        },
+                     },
                   },
                   '404': {
                      description: "Yo'nalish topilmadi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },
@@ -245,9 +308,23 @@ export const SpecializationSwagger = {
                responses: {
                   '200': {
                      description: "Yo'nalish faollashtirildi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "Yo'nalish statusi muvaffaqiyatli o'zgardi",
+                           },
+                        },
+                     },
                   },
                   '404': {
                      description: "Yo'nalish topilmadi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },

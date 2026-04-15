@@ -28,7 +28,7 @@ departmentRouter.put(
 departmentRouter.get(
    '/get-all',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
    DepartmentValidator.getAll(),
    validate,
    DepartmentController.getAll,
@@ -37,7 +37,7 @@ departmentRouter.get(
 departmentRouter.get(
    '/get-one/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
    DepartmentValidator.mongoId(),
    validate,
    DepartmentController.getById,

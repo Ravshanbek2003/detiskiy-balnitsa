@@ -1,3 +1,5 @@
+import { SwaggerExamples } from './examples'
+
 const AuthSwagger = {
    endpoint: 'auth',
    paths: [
@@ -16,13 +18,12 @@ const AuthSwagger = {
                            properties: {
                               login: {
                                  type: 'string',
-                                 example: 'accountant_login',
-                                 description:
-                                    "Foydalanuvchi logini",
+                                 example: 'sardor_01',
+                                 description: 'Foydalanuvchi logini',
                               },
                               password: {
                                  type: 'string',
-                                 example: 'password',
+                                 example: 'password123',
                               },
                            },
                            required: ['login', 'password'],
@@ -33,9 +34,20 @@ const AuthSwagger = {
                responses: {
                   '200': {
                      description: 'Login successful and access token returned',
+                     content: {
+                        'application/json': {
+                           schema: { type: 'object' },
+                           example: SwaggerExamples.auth.login_success,
+                        },
+                     },
                   },
                   '400': {
                      description: 'Invalid credentials',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.auth.login_error,
+                        },
+                     },
                   },
                },
             },
@@ -60,7 +72,7 @@ const AuthSwagger = {
                               },
                               login: {
                                  type: 'string',
-                                 example: 'accountant_01',
+                                 example: 'sardor_01',
                               },
                               phone: {
                                  type: 'string',
@@ -68,14 +80,19 @@ const AuthSwagger = {
                               },
                               password: {
                                  type: 'string',
-                                 example: 'password',
+                                 example: 'SecurePass123',
                               },
                               reg_key: {
                                  type: 'string',
                                  example: 'registrationkey789',
                               },
                            },
-                           required: ['fullname', 'login', 'password', 'reg_key'],
+                           required: [
+                              'fullname',
+                              'login',
+                              'password',
+                              'reg_key',
+                           ],
                         },
                      },
                   },
@@ -83,9 +100,26 @@ const AuthSwagger = {
                responses: {
                   '201': {
                      description: 'Accountant created successfully',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.auth.signup_success,
+                        },
+                     },
                   },
                   '400': {
                      description: 'Invalid data or login already exists',
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: false,
+                              error: {
+                                 statusCode: 400,
+                                 statusMsg: 'BAD_REQUEST',
+                                 msg: 'Bu login allaqachon mavjud',
+                              },
+                           },
+                        },
+                     },
                   },
                },
             },
@@ -101,9 +135,19 @@ const AuthSwagger = {
                responses: {
                   '200': {
                      description: 'Current user data',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.auth.get_me,
+                        },
+                     },
                   },
                   '401': {
                      description: 'Authentication required',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.unauthorized,
+                        },
+                     },
                   },
                },
             },
@@ -123,15 +167,22 @@ const AuthSwagger = {
                         schema: {
                            type: 'object',
                            properties: {
-                              fullname: { type: 'string' },
-                              login: { type: 'string', example: 'new_login' },
+                              fullname: {
+                                 type: 'string',
+                                 example: 'Sardor Aliyev Jr.',
+                              },
+                              login: {
+                                 type: 'string',
+                                 example: 'sardor_new_login',
+                              },
                               phone: {
                                  type: 'string',
                                  example: '+998901234567',
                               },
                               image: {
                                  type: 'string',
-                                 example: 'https://example.com/photo.jpg',
+                                 example:
+                                    'https://s3.example.com/users/photo.jpg',
                               },
                            },
                         },
@@ -141,6 +192,14 @@ const AuthSwagger = {
                responses: {
                   '200': {
                      description: 'Profile updated successfully',
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message: 'Profil muvaffaqiyatli yangilandi',
+                           },
+                        },
+                     },
                   },
                },
             },

@@ -55,6 +55,7 @@ const documentSchema = new Schema<PatientDocumentI>(
       payment_status: {
          type: String,
          enum: ['paid', 'unpaid'],
+         default: 'unpaid',
       },
       created_by: {
          type: Schema.Types.ObjectId,

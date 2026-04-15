@@ -1,3 +1,5 @@
+import { SwaggerExamples } from './examples'
+
 export const DepartmentSwagger = {
    endpoint: 'department',
    paths: [
@@ -46,9 +48,19 @@ export const DepartmentSwagger = {
                responses: {
                   '201': {
                      description: "Bo'lim muvaffaqiyatli yaratildi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.department.create_success,
+                        },
+                     },
                   },
                   '400': {
                      description: 'Validatsiya xatoligi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
                   },
                },
             },
@@ -85,6 +97,11 @@ export const DepartmentSwagger = {
                responses: {
                   '200': {
                      description: "Bo'limlar ro'yxati",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.department.get_all,
+                        },
+                     },
                   },
                },
             },
@@ -107,9 +124,19 @@ export const DepartmentSwagger = {
                responses: {
                   '200': {
                      description: "Bo'lim topildi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.department.get_one,
+                        },
+                     },
                   },
                   '404': {
                      description: "Bo'lim topilmadi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },
@@ -167,9 +194,31 @@ export const DepartmentSwagger = {
                responses: {
                   '200': {
                      description: "Bo'lim muvaffaqiyatli yangilandi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "Bo'lim ma'lumotlari muvaffaqiyatli yangilandi",
+                           },
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'Validatsiya xatoligi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
                   },
                   '404': {
                      description: "Bo'lim topilmadi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },
@@ -192,9 +241,22 @@ export const DepartmentSwagger = {
                responses: {
                   '200': {
                      description: "Bo'lim o'chirildi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message: "Bo'lim muvaffaqiyatli o'chirildi",
+                           },
+                        },
+                     },
                   },
                   '404': {
                      description: "Bo'lim topilmadi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },

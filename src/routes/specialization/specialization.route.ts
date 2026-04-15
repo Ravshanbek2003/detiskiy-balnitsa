@@ -28,7 +28,7 @@ specializationRouter.put(
 specializationRouter.get(
    '/get-all',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
    SpecializationValidator.getAll(),
    validate,
    SpecializationController.getAll,
@@ -37,7 +37,7 @@ specializationRouter.get(
 specializationRouter.get(
    '/get-one/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
    SpecializationValidator.mongoId(),
    validate,
    SpecializationController.getById,

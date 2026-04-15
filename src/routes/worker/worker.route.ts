@@ -19,7 +19,7 @@ workerRouter.post(
 workerRouter.get(
    '/get-all',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   roleMiddleware([RoleConstants.ACCOUNTANT, RoleConstants.CASHIER]),
    WorkerValidator.getAll(),
    validate,
    WorkerController.getAll,
@@ -28,7 +28,7 @@ workerRouter.get(
 workerRouter.get(
    '/get-one/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   roleMiddleware([RoleConstants.ACCOUNTANT, RoleConstants.CASHIER]),
    WorkerValidator.mongoId(),
    validate,
    WorkerController.getById,

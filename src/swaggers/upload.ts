@@ -1,3 +1,5 @@
+import { SwaggerExamples } from './examples'
+
 const UploadSwagger = {
    endpoint: 'upload',
    paths: [
@@ -29,16 +31,23 @@ const UploadSwagger = {
                      description: 'File uploaded successfully',
                      content: {
                         'application/json': {
-                           schema: {
-                              type: 'object',
-                              properties: {
-                                 success: { type: 'boolean', example: true },
-                                 url: {
-                                    type: 'string',
-                                    example: '/uploads/abc.jpg',
-                                 },
-                              },
-                           },
+                           example: SwaggerExamples.upload.file_success,
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'No file uploaded or invalid file',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
+                  },
+                  '413': {
+                     description: 'File size exceeded',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.upload.error_file_too_large,
                         },
                      },
                   },
@@ -74,20 +83,18 @@ const UploadSwagger = {
                      description: 'Files uploaded successfully',
                      content: {
                         'application/json': {
-                           schema: {
-                              type: 'object',
-                              properties: {
-                                 success: { type: 'boolean', example: true },
-                                 urls: {
-                                    type: 'array',
-                                    items: { type: 'string' },
-                                    example: [
-                                       '/uploads/a.jpg',
-                                       '/uploads/b.jpg',
-                                    ],
-                                 },
-                              },
+                           example: {
+                              success: true,
+                              urls: ['/uploads/a.jpg', '/uploads/b.jpg'],
                            },
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'No files uploaded',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
                         },
                      },
                   },
@@ -127,21 +134,41 @@ const UploadSwagger = {
                      description: 'Video uploaded successfully',
                      content: {
                         'application/json': {
-                           schema: {
-                              type: 'object',
-                              properties: {
-                                 success: { type: 'boolean', example: true },
-                                 file_path: {
-                                    type: 'string',
-                                    example: 'video/abc123.mp4',
-                                 },
+                           example: SwaggerExamples.upload.video_success,
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'No file uploaded',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
+                  },
+                  '413': {
+                     description: 'File size exceeded (max 100MB)',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.upload.error_file_too_large,
+                        },
+                     },
+                  },
+                  '422': {
+                     description: 'Invalid file type',
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: false,
+                              error: {
+                                 statusCode: 422,
+                                 statusMsg: 'UNPROCESSABLE_ENTITY',
+                                 msg: 'Invalid file type. Allowed: MP4, MOV, WEBM, AVI, MKV',
                               },
                            },
                         },
                      },
                   },
-                  '400': { description: 'No file uploaded' },
-                  '422': { description: 'Invalid file type or size exceeded' },
                },
             },
          },
@@ -177,25 +204,48 @@ const UploadSwagger = {
                      description: 'Videos uploaded successfully',
                      content: {
                         'application/json': {
-                           schema: {
-                              type: 'object',
-                              properties: {
-                                 success: { type: 'boolean', example: true },
-                                 file_paths: {
-                                    type: 'array',
-                                    items: { type: 'string' },
-                                    example: [
-                                       'video/abc123.mp4',
-                                       'video/def456.mp4',
-                                    ],
-                                 },
+                           example: {
+                              success: true,
+                              file_paths: [
+                                 'video/abc123.mp4',
+                                 'video/def456.mp4',
+                              ],
+                           },
+                        },
+                     },
+                  },
+                  '400': {
+                     description: 'No files uploaded',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.validation_error,
+                        },
+                     },
+                  },
+                  '413': {
+                     description: 'File size exceeded (max 100MB each)',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.upload.error_file_too_large,
+                        },
+                     },
+                  },
+                  '422': {
+                     description:
+                        'Invalid file type or too many files (max 10)',
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: false,
+                              error: {
+                                 statusCode: 422,
+                                 statusMsg: 'UNPROCESSABLE_ENTITY',
+                                 msg: 'Max 10 videos allowed',
                               },
                            },
                         },
                      },
                   },
-                  '400': { description: 'No files uploaded' },
-                  '422': { description: 'Invalid file type or size exceeded' },
                },
             },
          },

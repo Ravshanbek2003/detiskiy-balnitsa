@@ -22,6 +22,22 @@ export class DepartmentController {
          )
       }
 
+      // Foiz yigindisini tekshirish
+      if (share_percentages) {
+         const total =
+            (share_percentages.doctor || 0) +
+            (share_percentages.nurse || 0) +
+            (share_percentages.assistant_nurse || 0)
+
+         if (total !== 0 && total > 100) {
+            throw new HttpException(
+               StatusCodes.BAD_REQUEST,
+               ReasonPhrases.BAD_REQUEST,
+               `Ulishlar jami 100%dan katta bo'lmasligi kerak. Siz ${total}% kiritdingiz.`,
+            )
+         }
+      }
+
       await DepartmentModel.create({
          name,
          share_percentages,
@@ -115,6 +131,22 @@ export class DepartmentController {
                StatusCodes.BAD_REQUEST,
                ReasonPhrases.BAD_REQUEST,
                "Ushbu nomli bo'lim allaqachon mavjud!",
+            )
+         }
+      }
+
+      // Foiz yigindisini tekshirish (yangilash vaqtida)
+      if (share_percentages) {
+         const total =
+            (share_percentages.doctor || 0) +
+            (share_percentages.nurse || 0) +
+            (share_percentages.assistant_nurse || 0)
+
+         if (total !== 0 && total > 100) {
+            throw new HttpException(
+               StatusCodes.BAD_REQUEST,
+               ReasonPhrases.BAD_REQUEST,
+               `Ulishlar jami 100%dan katta bo'lmasligi kerak. Siz ${total}% kiritdingiz.`,
             )
          }
       }

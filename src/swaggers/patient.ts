@@ -1,3 +1,5 @@
+import { SwaggerExamples } from './examples'
+
 export const PatientSwagger = {
    endpoint: 'patient',
    paths: [
@@ -73,9 +75,26 @@ export const PatientSwagger = {
                responses: {
                   '201': {
                      description: "Bemor muvaffaqiyatli ro'yxatga olindi",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.patient.create_success,
+                        },
+                     },
                   },
                   '400': {
                      description: 'Validatsiya xatosi yoki chek raqam mavjud',
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: false,
+                              error: {
+                                 statusCode: 400,
+                                 statusMsg: 'BAD_REQUEST',
+                                 msg: 'Bu check number allaqachon mavjud',
+                              },
+                           },
+                        },
+                     },
                   },
                },
             },
@@ -126,6 +145,11 @@ export const PatientSwagger = {
                responses: {
                   '200': {
                      description: "Bemorlar ro'yxati",
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.patient.get_all,
+                        },
+                     },
                   },
                },
             },
@@ -148,9 +172,19 @@ export const PatientSwagger = {
                responses: {
                   '200': {
                      description: 'Bemor topildi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.patient.get_one,
+                        },
+                     },
                   },
                   '404': {
                      description: 'Bemor topilmadi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.not_found,
+                        },
+                     },
                   },
                },
             },

@@ -89,22 +89,44 @@ export class PatientController {
          }
       }
 
-      await PatientModel.create({
-         full_name,
-         check_number,
-         department_id,
-         department_name,
-         specialization_id,
-         specialization_name,
-         doctor,
-         doctor_name,
-         nurse,
-         nurse_name,
-         amount,
-         payment_method,
-         payment_status,
-         created_by,
-      })
+      // Concurrent: Create patient va increment worker patient counts
+      const updatePromises: Promise<any>[] = []
+      if (doctor) {
+         updatePromises.push(
+            WorkerModel.findByIdAndUpdate(doctor, {
+               $inc: { today_patients_count: 1 },
+               $set: { last_patient_at: new Date() },
+            }).exec(),
+         )
+      }
+      if (nurse) {
+         updatePromises.push(
+            WorkerModel.findByIdAndUpdate(nurse, {
+               $inc: { today_patients_count: 1 },
+               $set: { last_patient_at: new Date() },
+            }).exec(),
+         )
+      }
+
+      await Promise.all([
+         PatientModel.create({
+            full_name,
+            check_number,
+            department_id,
+            department_name,
+            specialization_id,
+            specialization_name,
+            doctor,
+            doctor_name,
+            nurse,
+            nurse_name,
+            amount,
+            payment_method,
+            payment_status,
+            created_by,
+         }),
+         ...updatePromises,
+      ])
 
       res.status(StatusCodes.CREATED).json({
          success: true,
@@ -282,7 +304,56 @@ export class PatientController {
          ...(payment_status !== undefined && { payment_status }),
       })
 
-      await patient.save()
+      // Handle worker patient count updates if doctor or nurse changed
+      const updatePromises: Promise<any>[] = []
+
+      if (
+         doctor !== undefined &&
+         patient.doctor?.toString() !== doctor?.toString()
+      ) {
+         // Eski doctor sanini kamaytir
+         if (patient.doctor) {
+            updatePromises.push(
+               WorkerModel.findByIdAndUpdate(patient.doctor, {
+                  $inc: { today_patients_count: -1 },
+               }).exec(),
+            )
+         }
+         // Yangi doctor sanini oshir
+         if (doctor) {
+            updatePromises.push(
+               WorkerModel.findByIdAndUpdate(doctor, {
+                  $inc: { today_patients_count: 1 },
+                  $set: { last_patient_at: new Date() },
+               }).exec(),
+            )
+         }
+      }
+
+      if (
+         nurse !== undefined &&
+         patient.nurse?.toString() !== nurse?.toString()
+      ) {
+         // Eski hamshira sanini kamaytir
+         if (patient.nurse) {
+            updatePromises.push(
+               WorkerModel.findByIdAndUpdate(patient.nurse, {
+                  $inc: { today_patients_count: -1 },
+               }).exec(),
+            )
+         }
+         // Yangi hamshira sanini oshir
+         if (nurse) {
+            updatePromises.push(
+               WorkerModel.findByIdAndUpdate(nurse, {
+                  $inc: { today_patients_count: 1 },
+                  $set: { last_patient_at: new Date() },
+               }).exec(),
+            )
+         }
+      }
+
+      await Promise.all([patient.save(), ...updatePromises])
 
       res.status(StatusCodes.OK).json({
          success: true,
