@@ -142,6 +142,8 @@ export class PatientController {
       const specialization_id = req.query.specialization_id as string
       const payment_method = req.query.payment_method as string
       const payment_status = req.query.payment_status as string
+      const start_date = req.query.start_date as string
+      const end_date = req.query.end_date as string
 
       const queryObj: any = {}
 
@@ -157,6 +159,32 @@ export class PatientController {
       if (specialization_id) queryObj.specialization_id = specialization_id
       if (payment_method) queryObj.payment_method = payment_method
       if (payment_status) queryObj.payment_status = payment_status
+      if (start_date || end_date) {
+         queryObj.created_at = {}
+
+         if (start_date) {
+            const start = new Date(start_date)
+            start.setHours(0, 0, 0, 0)
+            queryObj.created_at.$gte = start
+         }
+
+         if (end_date) {
+            const end = new Date(end_date)
+            end.setHours(23, 59, 59, 999)
+            queryObj.created_at.$lte = end
+         }
+      } else {
+         const start = new Date()
+         start.setHours(0, 0, 0, 0)
+
+         const end = new Date()
+         end.setHours(23, 59, 59, 999)
+
+         queryObj.created_at = {
+            $gte: start,
+            $lte: end,
+         }
+      }
 
       const [result, total] = await Promise.all([
          PatientModel.find(queryObj)

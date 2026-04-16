@@ -106,6 +106,8 @@ export const PatientSwagger = {
             get: {
                tags: ['Patient'],
                summary: 'Barcha bemorlarni olish — Ruxsat: CASHIER',
+               description:
+                  "Agar start_date va end_date yuborilmasa, endpoint default holatda bugungi sana bo'yicha bemorlarni qaytaradi.",
                parameters: [
                   {
                      name: 'page',
@@ -140,6 +142,20 @@ export const PatientSwagger = {
                      name: 'payment_status',
                      in: 'query',
                      schema: { type: 'string', enum: ['paid', 'unpaid'] },
+                  },
+                  {
+                     name: 'start_date',
+                     in: 'query',
+                     schema: { type: 'string', format: 'date' },
+                     description:
+                        "Boshlanish sanasi (YYYY-MM-DD). Agar end_date berilmasa, filter ochiq qoladi.",
+                  },
+                  {
+                     name: 'end_date',
+                     in: 'query',
+                     schema: { type: 'string', format: 'date' },
+                     description:
+                        "Tugash sanasi (YYYY-MM-DD). Agar start_date berilmasa, filter ochiq qoladi.",
                   },
                ],
                responses: {

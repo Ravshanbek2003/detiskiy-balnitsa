@@ -207,6 +207,16 @@ export class PatientValidator {
          .optional()
          .isIn(['paid', 'unpaid'])
          .withMessage("To\\'lov holati 'paid' yoki 'unpaid' bo\\'lishi kerak."),
+
+      query('start_date')
+         .optional()
+         .isISO8601()
+         .withMessage("start_date YYYY-MM-DD (Yil-Oy-Kun) formatida bo'lishi kerak"),
+
+      query('end_date')
+         .optional()
+         .isISO8601()
+         .withMessage("end_date YYYY-MM-DD (Yil-Oy-Kun) formatida bo'lishi kerak"),
    ]
 
    public static mongoId = () => [
