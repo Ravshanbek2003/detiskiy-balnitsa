@@ -154,6 +154,65 @@ export const SwaggerExamples = {
       },
    },
 
+   salary_log: {
+      get_all: {
+         success: true,
+         data: [
+            {
+               _id: '64b8f1a2c3d4e5f6a7b8cf10',
+               worker_id: {
+                  _id: '64b8f1a2c3d4e5f6a7b8c9f3',
+                  fullname: 'Dr. Qodirov',
+                  phone: '+998901111111',
+                  worker_type: 'doctor',
+                  department_id: '64b8f1a2c3d4e5f6a7b8c9f1',
+                  specialization_id: '64b8f1a2c3d4e5f6a7b8c9f2',
+                  status: 'active',
+               },
+               worker_type: 'doctor',
+               salary_month: '2026-04',
+               month_date: '2026-04-01T00:00:00Z',
+               all_patient_count: 18,
+               paid_patient_count: 14,
+               amount: 3150000,
+               created_at: '2026-04-01T00:10:00Z',
+               updated_at: '2026-04-15T18:30:00Z',
+            },
+         ],
+         pagination: {
+            page: 1,
+            limit: 20,
+            total_items: 1,
+            total_pages: 1,
+            next_page: null,
+            prev_page: null,
+         },
+      },
+      get_one: {
+         success: true,
+         data: {
+            _id: '64b8f1a2c3d4e5f6a7b8cf10',
+            worker_id: {
+               _id: '64b8f1a2c3d4e5f6a7b8c9f3',
+               fullname: 'Dr. Qodirov',
+               phone: '+998901111111',
+               worker_type: 'doctor',
+               department_id: '64b8f1a2c3d4e5f6a7b8c9f1',
+               specialization_id: '64b8f1a2c3d4e5f6a7b8c9f2',
+               status: 'active',
+            },
+            worker_type: 'doctor',
+            salary_month: '2026-04',
+            month_date: '2026-04-01T00:00:00Z',
+            all_patient_count: 18,
+            paid_patient_count: 14,
+            amount: 3150000,
+            created_at: '2026-04-01T00:10:00Z',
+            updated_at: '2026-04-15T18:30:00Z',
+         },
+      },
+   },
+
    // ============== WORKER RESPONSES ==============
    worker: {
       create_success: {

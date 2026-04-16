@@ -8,7 +8,11 @@ import {
    SpecializationModel,
    WorkerModel,
 } from '../../models'
-import { HttpException, asyncHandler } from '../../utils'
+import {
+   HttpException,
+   asyncHandler,
+   syncSalaryLogsForMonth,
+} from '../../utils'
 import { regexEscape } from '../../utils/regex-escape'
 
 export class PatientController {
@@ -108,25 +112,27 @@ export class PatientController {
          )
       }
 
-      await Promise.all([
-         PatientModel.create({
-            full_name,
-            check_number,
-            department_id,
-            department_name,
-            specialization_id,
-            specialization_name,
-            doctor,
-            doctor_name,
-            nurse,
-            nurse_name,
-            amount,
-            payment_method,
-            payment_status,
-            created_by,
-         }),
-         ...updatePromises,
-      ])
+      const patient = await PatientModel.create({
+         full_name,
+         check_number,
+         department_id,
+         department_name,
+         specialization_id,
+         specialization_name,
+         doctor,
+         doctor_name,
+         nurse,
+         nurse_name,
+         amount,
+         payment_method,
+         payment_status,
+         created_by,
+      })
+
+      await Promise.all(updatePromises)
+
+      // Fire-and-forget salary log sync (debounced, non-blocking)
+      syncSalaryLogsForMonth(patient.created_at)
 
       res.status(StatusCodes.CREATED).json({
          success: true,
@@ -253,6 +259,10 @@ export class PatientController {
          )
       }
 
+      const previousDoctor = patient.doctor?.toString()
+      const previousNurse = patient.nurse?.toString()
+      const salaryLogMonthDate = patient.created_at
+
       if (check_number && check_number !== patient.check_number) {
          const existing = await PatientModel.findOne({ check_number }).lean()
          if (existing) {
@@ -335,14 +345,11 @@ export class PatientController {
       // Handle worker patient count updates if doctor or nurse changed
       const updatePromises: Promise<any>[] = []
 
-      if (
-         doctor !== undefined &&
-         patient.doctor?.toString() !== doctor?.toString()
-      ) {
+      if (doctor !== undefined && previousDoctor !== doctor?.toString()) {
          // Eski doctor sanini kamaytir
-         if (patient.doctor) {
+         if (previousDoctor) {
             updatePromises.push(
-               WorkerModel.findByIdAndUpdate(patient.doctor, {
+               WorkerModel.findByIdAndUpdate(previousDoctor, {
                   $inc: { today_patients_count: -1 },
                }).exec(),
             )
@@ -358,14 +365,11 @@ export class PatientController {
          }
       }
 
-      if (
-         nurse !== undefined &&
-         patient.nurse?.toString() !== nurse?.toString()
-      ) {
+      if (nurse !== undefined && previousNurse !== nurse?.toString()) {
          // Eski hamshira sanini kamaytir
-         if (patient.nurse) {
+         if (previousNurse) {
             updatePromises.push(
-               WorkerModel.findByIdAndUpdate(patient.nurse, {
+               WorkerModel.findByIdAndUpdate(previousNurse, {
                   $inc: { today_patients_count: -1 },
                }).exec(),
             )
@@ -381,7 +385,11 @@ export class PatientController {
          }
       }
 
-      await Promise.all([patient.save(), ...updatePromises])
+      await patient.save()
+      await Promise.all(updatePromises)
+
+      // Fire-and-forget salary log sync (debounced, non-blocking)
+      syncSalaryLogsForMonth(salaryLogMonthDate)
 
       res.status(StatusCodes.OK).json({
          success: true,
@@ -403,12 +411,15 @@ export class PatientController {
       }
 
       await PatientModel.deleteOne({ _id: id })
-      await LogModel.create({
+
+      // Log deletion
+      LogModel.create({
          type: 'DELETE_PATIENT',
          content: `Bemor o'chirildi: ${patient.full_name} (ID: ${patient._id})`,
-      })
+      }).catch(error => console.error('Log creation failed:', error))
 
-      //   bu yerda log model yaratilishi kerak
+      // Fire-and-forget salary log sync (debounced, non-blocking)
+      syncSalaryLogsForMonth(patient.created_at)
 
       res.status(StatusCodes.OK).json({
          success: true,
@@ -434,6 +445,9 @@ export class PatientController {
 
       patient.payment_status = payment_status
       await patient.save()
+
+      // Fire-and-forget salary log sync (debounced, non-blocking)
+      syncSalaryLogsForMonth(patient.created_at)
 
       res.status(StatusCodes.OK).json({
          success: true,
