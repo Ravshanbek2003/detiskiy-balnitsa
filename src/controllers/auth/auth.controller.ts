@@ -180,9 +180,13 @@ export class AuthController {
          $set: updateData,
       }).exec()
 
+      // Fresh user data qaytarish uchun databasedan o'qiymiz
+      const updatedUser = await UserModel.findById(user?._id).exec()
+
       res.status(StatusCodes.OK).json({
          success: true,
          message: SuccessMessages.UPDATED,
+         data: updatedUser,
       })
    })
 
