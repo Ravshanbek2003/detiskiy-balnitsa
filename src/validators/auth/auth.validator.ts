@@ -90,8 +90,8 @@ export class AuthValidator {
 
       body('image')
          .optional()
-         .isURL()
-         .withMessage("Rasm URL manzil bo'lishi kerak."),
+         .isString()
+         .withMessage("Rasm manzil bo'lishi kerak."),
    ]
 
    public static updatePassword = () => [

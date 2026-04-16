@@ -127,6 +127,7 @@ export class AuthController {
    })
 
    public static getMe = asyncHandler(async (req, res) => {
+      
       res.status(StatusCodes.OK).json({ success: true, data: req.user })
    })
 
