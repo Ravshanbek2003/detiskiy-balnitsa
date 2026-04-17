@@ -23,11 +23,21 @@ export const DepartmentSwagger = {
                               share_percentages: {
                                  type: 'object',
                                  properties: {
-                                    doctor: { type: 'number', example: 50 },
-                                    nurse: { type: 'number', example: 30 },
+                                    doctor: {
+                                       type: 'number',
+                                       example: 50,
+                                       description: 'Shifokor foizi (0-100)',
+                                    },
+                                    nurse: {
+                                       type: 'number',
+                                       example: 10000,
+                                       description: 'Hamshira aniq summa',
+                                    },
                                     assistant_nurse: {
                                        type: 'number',
-                                       example: 20,
+                                       example: 5000,
+                                       description:
+                                          'Kichik hamshira aniq summa',
                                     },
                                  },
                               },
@@ -170,11 +180,21 @@ export const DepartmentSwagger = {
                               share_percentages: {
                                  type: 'object',
                                  properties: {
-                                    doctor: { type: 'number', example: 50 },
-                                    nurse: { type: 'number', example: 30 },
+                                    doctor: {
+                                       type: 'number',
+                                       example: 50,
+                                       description: 'Shifokor foizi (0-100)',
+                                    },
+                                    nurse: {
+                                       type: 'number',
+                                       example: 10000,
+                                       description: 'Hamshira aniq summa',
+                                    },
                                     assistant_nurse: {
                                        type: 'number',
-                                       example: 20,
+                                       example: 5000,
+                                       description:
+                                          'Kichik hamshira aniq summa',
                                     },
                                  },
                               },

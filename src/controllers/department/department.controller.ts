@@ -22,18 +22,13 @@ export class DepartmentController {
          )
       }
 
-      // Foiz yigindisini tekshirish
-      if (share_percentages) {
-         const total =
-            (share_percentages.doctor || 0) +
-            (share_percentages.nurse || 0) +
-            (share_percentages.assistant_nurse || 0)
-
-         if (total !== 0 && total > 100) {
+      // Doctor foizini tekshirish
+      if (share_percentages && share_percentages.doctor) {
+         if (share_percentages.doctor < 0 || share_percentages.doctor > 100) {
             throw new HttpException(
                StatusCodes.BAD_REQUEST,
                ReasonPhrases.BAD_REQUEST,
-               `Ulishlar jami 100%dan katta bo'lmasligi kerak. Siz ${total}% kiritdingiz.`,
+               `Shifokor foizi 0 va 100 oralig'ida bo'lishi kerak.`,
             )
          }
       }
@@ -135,18 +130,13 @@ export class DepartmentController {
          }
       }
 
-      // Foiz yigindisini tekshirish (yangilash vaqtida)
-      if (share_percentages) {
-         const total =
-            (share_percentages.doctor || 0) +
-            (share_percentages.nurse || 0) +
-            (share_percentages.assistant_nurse || 0)
-
-         if (total !== 0 && total > 100) {
+      // Doctor foizini tekshirish (yangilash vaqtida)
+      if (share_percentages && share_percentages.doctor) {
+         if (share_percentages.doctor < 0 || share_percentages.doctor > 100) {
             throw new HttpException(
                StatusCodes.BAD_REQUEST,
                ReasonPhrases.BAD_REQUEST,
-               `Ulishlar jami 100%dan katta bo'lmasligi kerak. Siz ${total}% kiritdingiz.`,
+               `Shifokor foizi 0 va 100 oralig'ida bo'lishi kerak.`,
             )
          }
       }

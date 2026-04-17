@@ -81,9 +81,13 @@ const addAggregate = ({
 
    if (is_paid) {
       existing.paid_patient_count += 1
-      existing.amount = Number(
-         (existing.amount + (amount * share_percentage) / 100).toFixed(2),
-      )
+      // Doctor gets a percentage of the amount
+      // Nurse and assistant_nurse get a fixed amount per patient
+      const workerAmount =
+         worker_type === 'doctor'
+            ? (amount * share_percentage) / 100
+            : share_percentage
+      existing.amount = Number((existing.amount + workerAmount).toFixed(2))
    }
 
    aggregates.set(key, existing)

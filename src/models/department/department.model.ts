@@ -20,8 +20,8 @@ const documentSchema = new Schema<DepartmentDocumentI>(
       name: { type: String, required: true },
       share_percentages: {
          doctor: { type: Number, default: 0, min: 0, max: 100 },
-         nurse: { type: Number, default: 0, min: 0, max: 100 },
-         assistant_nurse: { type: Number, default: 0, min: 0, max: 100 },
+         nurse: { type: Number, default: 0, min: 0 },
+         assistant_nurse: { type: Number, default: 0, min: 0 },
       },
       description: { type: String },
       is_active: { type: Boolean, default: true },

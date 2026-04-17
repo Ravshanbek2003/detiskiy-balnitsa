@@ -281,8 +281,8 @@ export const SwaggerExamples = {
                name: 'Kardiologiya',
                share_percentages: {
                   doctor: 50,
-                  nurse: 30,
-                  assistant_nurse: 20,
+                  nurse: 10000,
+                  assistant_nurse: 5000,
                },
                description: "Yurak kasalliklari bo'limi",
                is_active: true,
@@ -294,8 +294,8 @@ export const SwaggerExamples = {
                name: 'Nevrologiya',
                share_percentages: {
                   doctor: 60,
-                  nurse: 25,
-                  assistant_nurse: 15,
+                  nurse: 12000,
+                  assistant_nurse: 6000,
                },
                description: "Asab kasalliklari bo'limi",
                is_active: true,
@@ -319,8 +319,8 @@ export const SwaggerExamples = {
             name: 'Kardiologiya',
             share_percentages: {
                doctor: 50,
-               nurse: 30,
-               assistant_nurse: 20,
+               nurse: 10000,
+               assistant_nurse: 5000,
             },
             description: "Yurak kasalliklari bo'limi",
             is_active: true,

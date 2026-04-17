@@ -25,17 +25,15 @@ export class DepartmentValidator {
          .optional()
          .isNumeric()
          .withMessage("Hamshira ulushi raqam bo\\'lishi kerak.")
-         .isFloat({ min: 0, max: 100 })
-         .withMessage("Hamshira ulushi 0 va 100 oralig'ida bo\\'lishi kerak."),
+         .isFloat({ min: 0 })
+         .withMessage("Hamshira ulushi 0 dan katta bo\\'lishi kerak."),
 
       body('share_percentages.assistant_nurse')
          .optional()
          .isNumeric()
          .withMessage("Kichik hamshira ulushi raqam bo\\'lishi kerak.")
-         .isFloat({ min: 0, max: 100 })
-         .withMessage(
-            "Kichik hamshira ulushi 0 va 100 oralig'ida bo\\'lishi kerak.",
-         ),
+         .isFloat({ min: 0 })
+         .withMessage("Kichik hamshira ulushi 0 dan katta bo\\'lishi kerak."),
 
       body('description')
          .optional()
@@ -81,17 +79,15 @@ export class DepartmentValidator {
          .optional()
          .isNumeric()
          .withMessage("Hamshira ulushi raqam bo\\'lishi kerak.")
-         .isFloat({ min: 0, max: 100 })
-         .withMessage("Hamshira ulushi 0 va 100 oralig'ida bo\\'lishi kerak."),
+         .isFloat({ min: 0 })
+         .withMessage("Hamshira ulushi 0 dan katta bo\\'lishi kerak."),
 
       body('share_percentages.assistant_nurse')
          .optional()
          .isNumeric()
          .withMessage("Kichik hamshira ulushi raqam bo\\'lishi kerak.")
-         .isFloat({ min: 0, max: 100 })
-         .withMessage(
-            "Kichik hamshira ulushi 0 va 100 oralig'ida bo\\'lishi kerak.",
-         ),
+         .isFloat({ min: 0 })
+         .withMessage("Kichik hamshira ulushi 0 dan katta bo\\'lishi kerak."),
 
       body('description')
          .optional()
