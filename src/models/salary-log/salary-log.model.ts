@@ -5,6 +5,7 @@ import { CollectionConstants } from '../../constants'
 export interface SalaryLogDocumentI {
    _id?: Types.ObjectId
    worker_id: Types.ObjectId
+   worker_fullname: string
    worker_type: 'doctor' | 'nurse' | 'assistant_nurse'
    salary_month: string // oylik log uchun oy va yil (masalan, "2024-06")
    month_date: Date // filtering uchun oyning 1-kuni (2024-06-01T00:00:00.000Z)
@@ -20,6 +21,11 @@ const documentSchema = new Schema<SalaryLogDocumentI>(
          type: String,
          required: true,
          enum: ['doctor', 'nurse', 'assistant_nurse'],
+      },
+      worker_fullname: {
+         type: String,
+         required: true,
+         index: true, // Search uchun index
       },
       salary_month: {
          type: String,

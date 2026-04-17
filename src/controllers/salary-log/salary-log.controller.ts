@@ -10,12 +10,18 @@ export class SalaryLogController {
       const salary_month = (req.query.salary_month as string) || ''
       const worker_id = (req.query.worker_id as string) || ''
       const worker_type = (req.query.worker_type as string) || ''
+      const search = (req.query.search as string) || ''
 
       const queryObj: any = {}
 
       if (salary_month) queryObj.salary_month = salary_month
       if (worker_id) queryObj.worker_id = worker_id
       if (worker_type) queryObj.worker_type = worker_type
+
+      // Worker nomiga asosan direct search
+      if (search) {
+         queryObj.worker_fullname = { $regex: search, $options: 'i' }
+      }
 
       const [result, total] = await Promise.all([
          SalaryLogModel.find(queryObj)

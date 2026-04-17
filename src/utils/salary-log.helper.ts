@@ -11,6 +11,7 @@ type SalaryWorkerType = 'doctor' | 'nurse' | 'assistant_nurse'
 
 interface SalaryLogAggregateI {
    worker_id: Types.ObjectId
+   worker_fullname: string
    worker_type: SalaryWorkerType
    salary_month: string
    month_date: Date
@@ -50,6 +51,7 @@ const getSalaryMonth = (date: Date): string => {
 const addAggregate = ({
    aggregates,
    worker_id,
+   worker_fullname,
    worker_type,
    salary_month,
    month_date,
@@ -59,6 +61,7 @@ const addAggregate = ({
 }: {
    aggregates: Map<string, SalaryLogAggregateI>
    worker_id: Types.ObjectId
+   worker_fullname: string
    worker_type: SalaryWorkerType
    salary_month: string
    month_date: Date
@@ -69,6 +72,7 @@ const addAggregate = ({
    const key = `${worker_id.toString()}:${salary_month}`
    const existing = aggregates.get(key) || {
       worker_id,
+      worker_fullname,
       worker_type,
       salary_month,
       month_date,
@@ -114,20 +118,31 @@ const performSalarySync = async (date: Date): Promise<void> => {
          patients.map(patient => toKey(patient.department_id)).filter(Boolean),
       ),
    ]
+   const doctorIds = [
+      ...new Set(
+         patients.map(patient => toKey(patient.doctor)).filter(Boolean),
+      ),
+   ]
    const nurseIds = [
       ...new Set(patients.map(patient => toKey(patient.nurse)).filter(Boolean)),
    ]
 
-   const [departments, nurses] = await Promise.all([
+   const [departments, doctors, nurses] = await Promise.all([
       departmentIds.length
          ? DepartmentModel.find({ _id: { $in: departmentIds } })
               .select('_id share_percentages')
               .lean()
               .exec()
          : [],
+      doctorIds.length
+         ? WorkerModel.find({ _id: { $in: doctorIds } })
+              .select('_id fullname worker_type')
+              .lean()
+              .exec()
+         : [],
       nurseIds.length
          ? WorkerModel.find({ _id: { $in: nurseIds } })
-              .select('_id worker_type')
+              .select('_id fullname worker_type')
               .lean()
               .exec()
          : [],
@@ -136,9 +151,8 @@ const performSalarySync = async (date: Date): Promise<void> => {
    const departmentMap = new Map(
       departments.map(department => [toKey(department._id), department]),
    )
-   const nurseTypeMap = new Map(
-      nurses.map(worker => [toKey(worker._id), worker.worker_type]),
-   )
+   const doctorMap = new Map(doctors.map(worker => [toKey(worker._id), worker]))
+   const nurseMap = new Map(nurses.map(worker => [toKey(worker._id), worker]))
    const aggregates = new Map<string, SalaryLogAggregateI>()
 
    for (const patient of patients) {
@@ -151,30 +165,41 @@ const performSalarySync = async (date: Date): Promise<void> => {
       const is_paid = patient.payment_status === 'paid'
 
       if (patient.doctor) {
-         addAggregate({
-            aggregates,
-            worker_id: patient.doctor,
-            worker_type: 'doctor',
-            salary_month,
-            month_date,
-            amount: patient.amount,
-            share_percentage: department.share_percentages?.doctor || 0,
-            is_paid,
-         })
-      }
+         const doctor = doctorMap.get(toKey(patient.doctor))
 
-      if (patient.nurse) {
-         const nurseType = nurseTypeMap.get(toKey(patient.nurse))
-
-         if (nurseType === 'nurse' || nurseType === 'assistant_nurse') {
+         if (doctor) {
             addAggregate({
                aggregates,
-               worker_id: patient.nurse,
-               worker_type: nurseType,
+               worker_id: patient.doctor,
+               worker_fullname: doctor.fullname,
+               worker_type: 'doctor',
                salary_month,
                month_date,
                amount: patient.amount,
-               share_percentage: department.share_percentages?.[nurseType] || 0,
+               share_percentage: department.share_percentages?.doctor || 0,
+               is_paid,
+            })
+         }
+      }
+
+      if (patient.nurse) {
+         const nurse = nurseMap.get(toKey(patient.nurse))
+
+         if (
+            nurse &&
+            (nurse.worker_type === 'nurse' ||
+               nurse.worker_type === 'assistant_nurse')
+         ) {
+            addAggregate({
+               aggregates,
+               worker_id: patient.nurse,
+               worker_fullname: nurse.fullname,
+               worker_type: nurse.worker_type,
+               salary_month,
+               month_date,
+               amount: patient.amount,
+               share_percentage:
+                  department.share_percentages?.[nurse.worker_type] || 0,
                is_paid,
             })
          }
