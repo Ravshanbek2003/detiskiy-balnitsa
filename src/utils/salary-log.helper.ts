@@ -7,6 +7,10 @@ import {
    WorkerModel,
 } from '../models'
 
+// Constants
+const DEBOUNCE_DELAY_MS = 3000
+const PAYMENT_STATUS_PAID = 'paid'
+
 type SalaryWorkerType = 'doctor' | 'nurse' | 'assistant_nurse'
 
 interface SalaryLogAggregateI {
@@ -19,6 +23,16 @@ interface SalaryLogAggregateI {
    paid_patient_count: number
    amount: number
 }
+
+// Utility: Extract unique IDs from array
+const extractUniqueIds = (
+   items: any[],
+   selector: (item: any) => Types.ObjectId | string | null | undefined,
+): (Types.ObjectId | string)[] => [
+   ...new Set(
+      items.map(selector).filter(Boolean) as (Types.ObjectId | string)[],
+   ),
+]
 
 const getMonthStart = (date: Date): Date => {
    const monthStart = new Date(date)
@@ -85,6 +99,15 @@ const addAggregate = ({
 
    if (is_paid) {
       existing.paid_patient_count += 1
+
+      // Validation
+      if (share_percentage < 0) {
+         console.warn(
+            `[SALARY_LOG_WARN] Negative share_percentage: ${share_percentage}`,
+         )
+         return
+      }
+
       // Doctor gets a percentage of the amount
       // Nurse and assistant_nurse get a fixed amount per patient
       const workerAmount =
@@ -113,35 +136,20 @@ const performSalarySync = async (date: Date): Promise<void> => {
       .lean()
       .exec()
 
-   const departmentIds = [
-      ...new Set(
-         patients.map(patient => toKey(patient.department_id)).filter(Boolean),
-      ),
-   ]
-   const doctorIds = [
-      ...new Set(
-         patients.map(patient => toKey(patient.doctor)).filter(Boolean),
-      ),
-   ]
-   const nurseIds = [
-      ...new Set(patients.map(patient => toKey(patient.nurse)).filter(Boolean)),
-   ]
+   const departmentIds = extractUniqueIds(patients, p => p.department_id)
+   const doctorIds = extractUniqueIds(patients, p => p.doctor)
+   const nurseIds = extractUniqueIds(patients, p => p.nurse)
+   const allWorkerIds = [...new Set([...doctorIds, ...nurseIds])]
 
-   const [departments, doctors, nurses] = await Promise.all([
+   const [departments, allWorkers] = await Promise.all([
       departmentIds.length
          ? DepartmentModel.find({ _id: { $in: departmentIds } })
               .select('_id share_percentages')
               .lean()
               .exec()
          : [],
-      doctorIds.length
-         ? WorkerModel.find({ _id: { $in: doctorIds } })
-              .select('_id fullname worker_type')
-              .lean()
-              .exec()
-         : [],
-      nurseIds.length
-         ? WorkerModel.find({ _id: { $in: nurseIds } })
+      allWorkerIds.length
+         ? WorkerModel.find({ _id: { $in: allWorkerIds } })
               .select('_id fullname worker_type')
               .lean()
               .exec()
@@ -151,8 +159,9 @@ const performSalarySync = async (date: Date): Promise<void> => {
    const departmentMap = new Map(
       departments.map(department => [toKey(department._id), department]),
    )
-   const doctorMap = new Map(doctors.map(worker => [toKey(worker._id), worker]))
-   const nurseMap = new Map(nurses.map(worker => [toKey(worker._id), worker]))
+   const workerMap = new Map(
+      allWorkers.map(worker => [toKey(worker._id), worker]),
+   )
    const aggregates = new Map<string, SalaryLogAggregateI>()
 
    for (const patient of patients) {
@@ -162,10 +171,10 @@ const performSalarySync = async (date: Date): Promise<void> => {
          continue
       }
 
-      const is_paid = patient.payment_status === 'paid'
+      const is_paid = patient.payment_status === PAYMENT_STATUS_PAID
 
       if (patient.doctor) {
-         const doctor = doctorMap.get(toKey(patient.doctor))
+         const doctor = workerMap.get(toKey(patient.doctor))
 
          if (doctor) {
             addAggregate({
@@ -183,7 +192,7 @@ const performSalarySync = async (date: Date): Promise<void> => {
       }
 
       if (patient.nurse) {
-         const nurse = nurseMap.get(toKey(patient.nurse))
+         const nurse = workerMap.get(toKey(patient.nurse))
 
          if (
             nurse &&
@@ -227,10 +236,16 @@ const performSalarySync = async (date: Date): Promise<void> => {
          worker_id: { $nin: aggregatedLogs.map(log => log.worker_id) },
       }).exec()
 
+      console.log(
+         `✅ [SALARY_LOG_SUCCESS] Synced ${aggregatedLogs.length} workers for ${salary_month}`,
+      )
       return
    }
 
    await SalaryLogModel.deleteMany({ salary_month }).exec()
+   console.log(
+      `ℹ️ [SALARY_LOG_INFO] No salary logs to sync for ${salary_month}`,
+   )
 }
 
 /**
@@ -247,7 +262,7 @@ export const syncSalaryLogsForMonth = (date: Date): void => {
       clearTimeout(monthDebounceMap.get(salary_month)!)
    }
 
-   // Yangi timeout: 3 secondda bitta qora hisoblash
+   // Yangi timeout: DEBOUNCE_DELAY_MS-da bitta qora hisoblash
    const timeoutId = setTimeout(() => {
       performSalarySync(date).catch(error => {
          console.error(
@@ -256,7 +271,7 @@ export const syncSalaryLogsForMonth = (date: Date): void => {
          )
       })
       monthDebounceMap.delete(salary_month)
-   }, 3000) // 3 second debounce
+   }, DEBOUNCE_DELAY_MS)
 
    monthDebounceMap.set(salary_month, timeoutId)
 }
