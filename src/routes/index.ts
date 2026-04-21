@@ -15,5 +15,9 @@ export const Routes = [
    { path: '/patient', router: patientRouter },
    { path: '/salary-log', router: salaryLogRouter },
    { path: '/salary-log-nurse', router: salaryLogNurseRouter },
+   { path: '/specialization', router: specializationRouter },
+   { path: '/upload', router: uploadRouter },
+   { path: '/user', router: userRouter },
+   { path: '/worker', router: workerRouter },
    { path: '/main', router: mainRouter },
 ]
