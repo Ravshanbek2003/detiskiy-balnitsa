@@ -84,6 +84,11 @@ export class PatientValidator {
          .optional()
          .isIn(['paid', 'unpaid'])
          .withMessage("To\\'lov holati 'paid' yoki 'unpaid' bo\\'lishi kerak."),
+
+      body('country')
+         .optional()
+         .isIn(['UZB', 'OTHERS'])
+         .withMessage("Mamlakat 'UZB' yoki 'OTHERS' bo\\'lishi kerak."),
    ]
 
    public static update = () => [
@@ -170,6 +175,11 @@ export class PatientValidator {
          .optional()
          .isIn(['paid', 'unpaid'])
          .withMessage("To\\'lov holati 'paid' yoki 'unpaid' bo\\'lishi kerak."),
+
+      body('country')
+         .optional()
+         .isIn(['UZB', 'OTHERS'])
+         .withMessage("Mamlakat 'UZB' yoki 'OTHERS' bo\\'lishi kerak."),
    ]
 
    public static getAll = () => [
@@ -211,12 +221,26 @@ export class PatientValidator {
       query('start_date')
          .optional()
          .isISO8601()
-         .withMessage("start_date YYYY-MM-DD (Yil-Oy-Kun) formatida bo'lishi kerak"),
+         .withMessage(
+            "start_date YYYY-MM-DD (Yil-Oy-Kun) formatida bo'lishi kerak",
+         ),
 
       query('end_date')
          .optional()
          .isISO8601()
-         .withMessage("end_date YYYY-MM-DD (Yil-Oy-Kun) formatida bo'lishi kerak"),
+         .withMessage(
+            "end_date YYYY-MM-DD (Yil-Oy-Kun) formatida bo'lishi kerak",
+         ),
+
+      query('country')
+         .optional()
+         .isIn(['UZB', 'OTHERS'])
+         .withMessage("Mamlakat 'UZB' yoki 'OTHERS' bo\\'lishi kerak."),
+
+      query('created_by')
+         .optional()
+         .isMongoId()
+         .withMessage("Yaratgan foydalanuvchi ID noto\\'g\\'ri formatda."),
    ]
 
    public static mongoId = () => [

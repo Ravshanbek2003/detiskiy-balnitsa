@@ -12,6 +12,11 @@ export interface PatientDocumentI {
    check_number: string
    department_id: Types.ObjectId //bo'lim
    department_name?: string //bo'lim nomi
+   department_share_percentages?: {
+      doctor: number
+      nurse: number
+      assistant_nurse: number
+   }
    specialization_id: Types.ObjectId //yo'nalish
    specialization_name?: string //yo'nalish nomi
    doctor?: Types.ObjectId
@@ -19,9 +24,11 @@ export interface PatientDocumentI {
    nurse?: Types.ObjectId
    nurse_name?: string
    amount: number
+   country: 'UZB' | 'OTHERS'
    payment_method: PatientPaymentMethodType
    payment_status?: 'paid' | 'unpaid'
    created_by?: Types.ObjectId
+   created_by_fullname?: string
    readonly created_at: Date
    readonly updated_at: Date
 }
@@ -52,10 +59,22 @@ const documentSchema = new Schema<PatientDocumentI>(
          required: true,
          enum: patientPaymentMethods,
       },
+      department_share_percentages: {
+         doctor: { type: Number, default: 0, min: 0, max: 100 },
+         nurse: { type: Number, default: 0, min: 0 },
+         assistant_nurse: { type: Number, default: 0, min: 0 },
+      },
       payment_status: {
          type: String,
          enum: ['paid', 'unpaid'],
          default: 'unpaid',
+      },
+      created_by_fullname: { type: String },
+      country: {
+         type: String,
+         required: true,
+         enum: ['UZB', 'OTHERS'],
+         default: 'UZB',
       },
       created_by: {
          type: Schema.Types.ObjectId,

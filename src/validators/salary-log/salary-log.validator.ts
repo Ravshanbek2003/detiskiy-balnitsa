@@ -23,20 +23,13 @@ export class SalaryLogValidator {
          .optional()
          .isMongoId()
          .withMessage("Xodim ID noto'g'ri formatda."),
-
-      query('worker_type')
-         .optional()
-         .isIn(['doctor', 'nurse', 'assistant_nurse'])
-         .withMessage(
-            "Xodim turi 'doctor', 'nurse' yoki 'assistant_nurse' bo'lishi kerak.",
-         ),
    ]
 
    public static mongoId = () => [
       param('id')
          .trim()
          .notEmpty()
-         .withMessage("Oylik log ID kiritilishi shart.")
+         .withMessage('Oylik log ID kiritilishi shart.')
          .bail()
          .isMongoId()
          .withMessage("Oylik log ID noto'g'ri formatda."),

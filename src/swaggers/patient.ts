@@ -61,12 +61,18 @@ export const PatientSwagger = {
                                  enum: ['paid', 'unpaid'],
                                  example: 'paid',
                               },
+                              country: {
+                                 type: 'string',
+                                 enum: ['UZB', 'OTHERS'],
+                                 example: 'UZB',
+                              },
                            },
                            required: [
                               'full_name',
                               'check_number',
                               'amount',
                               'payment_method',
+                              'country',
                            ],
                         },
                      },
@@ -148,14 +154,26 @@ export const PatientSwagger = {
                      in: 'query',
                      schema: { type: 'string', format: 'date' },
                      description:
-                        "Boshlanish sanasi (YYYY-MM-DD). Agar end_date berilmasa, filter ochiq qoladi.",
+                        'Boshlanish sanasi (YYYY-MM-DD). Agar end_date berilmasa, filter ochiq qoladi.',
                   },
                   {
                      name: 'end_date',
                      in: 'query',
                      schema: { type: 'string', format: 'date' },
                      description:
-                        "Tugash sanasi (YYYY-MM-DD). Agar start_date berilmasa, filter ochiq qoladi.",
+                        'Tugash sanasi (YYYY-MM-DD). Agar start_date berilmasa, filter ochiq qoladi.',
+                  },
+                  {
+                     name: 'country',
+                     in: 'query',
+                     schema: { type: 'string', enum: ['UZB', 'OTHERS'] },
+                     description: 'Davlat nomi',
+                  },
+                  {
+                     name: 'created_by',
+                     in: 'query',
+                     schema: { type: 'string' },
+                     description: 'Yaratgan foydalanuvchi ID si',
                   },
                ],
                responses: {
@@ -271,6 +289,11 @@ export const PatientSwagger = {
                                  type: 'string',
                                  enum: ['paid', 'unpaid'],
                                  example: 'paid',
+                              },
+                              country: {
+                                 type: 'string',
+                                 enum: ['UZB', 'OTHERS'],
+                                 example: 'UZB',
                               },
                            },
                         },

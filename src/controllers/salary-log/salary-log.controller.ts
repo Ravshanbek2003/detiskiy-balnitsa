@@ -9,14 +9,14 @@ export class SalaryLogController {
       const limit = parseInt(req.query.limit as string, 10) || 20
       const salary_month = (req.query.salary_month as string) || ''
       const worker_id = (req.query.worker_id as string) || ''
-      const worker_type = (req.query.worker_type as string) || ''
       const search = (req.query.search as string) || ''
 
       const queryObj: any = {}
 
       if (salary_month) queryObj.salary_month = salary_month
       if (worker_id) queryObj.worker_id = worker_id
-      if (worker_type) queryObj.worker_type = worker_type
+
+      queryObj.worker_type = 'doctor' // only return doctor salary logs
 
       // Worker nomiga asosan direct search
       if (search) {

@@ -24,14 +24,6 @@ export const SalaryLogSwagger = {
                      in: 'query',
                      schema: { type: 'string' },
                   },
-                  {
-                     name: 'worker_type',
-                     in: 'query',
-                     schema: {
-                        type: 'string',
-                        enum: ['doctor', 'nurse', 'assistant_nurse'],
-                     },
-                  },
                ],
                responses: {
                   '200': {
@@ -59,7 +51,8 @@ export const SalaryLogSwagger = {
          body: {
             get: {
                tags: ['Salary Log'],
-               summary: "Bitta oylik ish haqi logini olish — Ruxsat: ACCOUNTANT",
+               summary:
+                  'Bitta oylik ish haqi logini olish — Ruxsat: ACCOUNTANT',
                security: [{ bearerAuth: [] }],
                parameters: [
                   {

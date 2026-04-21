@@ -31,6 +31,7 @@ export class PatientController {
          amount,
          payment_method,
          payment_status,
+         country,
       } = req.body as PatientDocumentI
       const created_by = req.user?._id
 
@@ -117,6 +118,7 @@ export class PatientController {
          check_number,
          department_id,
          department_name,
+         department_share_percentages: department.share_percentages,
          specialization_id,
          specialization_name,
          doctor,
@@ -126,7 +128,9 @@ export class PatientController {
          amount,
          payment_method,
          payment_status,
+         country,
          created_by,
+         created_by_fullname: req.user?.fullname,
       })
 
       await Promise.all(updatePromises)
@@ -148,6 +152,8 @@ export class PatientController {
       const specialization_id = req.query.specialization_id as string
       const payment_method = req.query.payment_method as string
       const payment_status = req.query.payment_status as string
+      const country = req.query.country as string
+      const created_by = req.query.created_by as string
       const start_date = req.query.start_date as string
       const end_date = req.query.end_date as string
 
@@ -165,6 +171,8 @@ export class PatientController {
       if (specialization_id) queryObj.specialization_id = specialization_id
       if (payment_method) queryObj.payment_method = payment_method
       if (payment_status) queryObj.payment_status = payment_status
+      if (country) queryObj.country = country
+      if (created_by) queryObj.created_by = created_by
       if (start_date || end_date) {
          queryObj.created_at = {}
 
@@ -247,6 +255,7 @@ export class PatientController {
          amount,
          payment_method,
          payment_status,
+         country,
       } = req.body as Partial<PatientDocumentI>
 
       const patient = await PatientModel.findById(id).exec()
@@ -340,6 +349,7 @@ export class PatientController {
          ...(amount !== undefined && { amount }),
          ...(payment_method !== undefined && { payment_method }),
          ...(payment_status !== undefined && { payment_status }),
+         ...(country !== undefined && { country }),
       })
 
       // Handle worker patient count updates if doctor or nurse changed

@@ -11,7 +11,7 @@ import {
 const DEBOUNCE_DELAY_MS = 3000
 const PAYMENT_STATUS_PAID = 'paid'
 
-type SalaryWorkerType = 'doctor' | 'nurse' | 'assistant_nurse'
+type SalaryWorkerType = 'doctor'
 
 interface SalaryLogAggregateI {
    worker_id: Types.ObjectId
@@ -20,7 +20,7 @@ interface SalaryLogAggregateI {
    salary_month: string
    month_date: Date
    all_patient_count: number
-   paid_patient_count: number
+   paid_patient_amount: number
    amount: number
 }
 
@@ -91,14 +91,14 @@ const addAggregate = ({
       salary_month,
       month_date,
       all_patient_count: 0,
-      paid_patient_count: 0,
+      paid_patient_amount: 0,
       amount: 0,
    }
 
    existing.all_patient_count += 1
 
    if (is_paid) {
-      existing.paid_patient_count += 1
+      existing.paid_patient_amount += amount
 
       // Validation
       if (share_percentage < 0) {
@@ -109,11 +109,7 @@ const addAggregate = ({
       }
 
       // Doctor gets a percentage of the amount
-      // Nurse and assistant_nurse get a fixed amount per patient
-      const workerAmount =
-         worker_type === 'doctor'
-            ? (amount * share_percentage) / 100
-            : share_percentage
+      const workerAmount = (amount * share_percentage) / 100
       existing.amount = Number((existing.amount + workerAmount).toFixed(2))
    }
 
@@ -132,14 +128,13 @@ const performSalarySync = async (date: Date): Promise<void> => {
    const patients = await PatientModel.find({
       created_at: { $gte: month_date, $lt: nextMonthStart },
    })
-      .select('doctor nurse department_id amount payment_status')
+      .select('doctor department_id amount payment_status')
       .lean()
       .exec()
 
    const departmentIds = extractUniqueIds(patients, p => p.department_id)
    const doctorIds = extractUniqueIds(patients, p => p.doctor)
-   const nurseIds = extractUniqueIds(patients, p => p.nurse)
-   const allWorkerIds = [...new Set([...doctorIds, ...nurseIds])]
+   const allWorkerIds = [...new Set([...doctorIds])]
 
    const [departments, allWorkers] = await Promise.all([
       departmentIds.length
@@ -186,29 +181,6 @@ const performSalarySync = async (date: Date): Promise<void> => {
                month_date,
                amount: patient.amount,
                share_percentage: department.share_percentages?.doctor || 0,
-               is_paid,
-            })
-         }
-      }
-
-      if (patient.nurse) {
-         const nurse = workerMap.get(toKey(patient.nurse))
-
-         if (
-            nurse &&
-            (nurse.worker_type === 'nurse' ||
-               nurse.worker_type === 'assistant_nurse')
-         ) {
-            addAggregate({
-               aggregates,
-               worker_id: patient.nurse,
-               worker_fullname: nurse.fullname,
-               worker_type: nurse.worker_type,
-               salary_month,
-               month_date,
-               amount: patient.amount,
-               share_percentage:
-                  department.share_percentages?.[nurse.worker_type] || 0,
                is_paid,
             })
          }
