@@ -1,3 +1,4 @@
+import { populate } from 'dotenv'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
 import { SalaryLogModel } from '../../models'
@@ -10,11 +11,33 @@ export class SalaryLogController {
       const salary_month = (req.query.salary_month as string) || ''
       const worker_id = (req.query.worker_id as string) || ''
       const search = (req.query.search as string) || ''
+      const start_date = req.query.start_date as string
+      const end_date = req.query.end_date as string
+      const department_id = (req.query.department_id as string) || ''
+      const specialization_id = (req.query.specialization_id as string) || ''
 
       const queryObj: any = {}
 
       if (salary_month) queryObj.salary_month = salary_month
       if (worker_id) queryObj.worker_id = worker_id
+      if (department_id) queryObj.department_id = department_id
+      if (specialization_id) queryObj.specialization_id = specialization_id
+
+      if (start_date || end_date) {
+         queryObj.month_date = {}
+
+         if (start_date) {
+            const start = new Date(start_date)
+            start.setHours(0, 0, 0, 0)
+            queryObj.month_date.$gte = start
+         }
+
+         if (end_date) {
+            const end = new Date(end_date)
+            end.setHours(23, 59, 59, 999)
+            queryObj.month_date.$lte = end
+         }
+      }
 
       queryObj.worker_type = 'doctor' // only return doctor salary logs
 
@@ -30,6 +53,8 @@ export class SalaryLogController {
                select:
                   '_id fullname phone worker_type department_id specialization_id status',
             })
+            .populate('department_id', '_id name share_percentages')
+            .populate('specialization_id', '_id name')
             .sort({ month_date: -1, created_at: -1 })
             .skip((page - 1) * limit)
             .limit(limit)

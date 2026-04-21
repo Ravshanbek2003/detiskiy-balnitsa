@@ -12,6 +12,8 @@ export interface SalaryLogDocumentI {
    all_patient_count: number //ko'rgan bemorlari soni butun oy bo'yicha
    paid_patient_amount: number //umumiy bemorlar  qancha to'lov qilingani jamisi 1 oydagi
    amount: number
+   department_id?: Types.ObjectId
+   specialization_id?: Types.ObjectId
    readonly created_at: Date
    readonly updated_at: Date
 }
@@ -44,6 +46,16 @@ const documentSchema = new Schema<SalaryLogDocumentI>(
       amount: { type: Number, required: true },
       all_patient_count: { type: Number, default: 0 },
       paid_patient_amount: { type: Number, default: 0 },
+      department_id: {
+         type: Schema.Types.ObjectId,
+         ref: CollectionConstants.DEPARTMENT,
+         index: true,
+      },
+      specialization_id: {
+         type: Schema.Types.ObjectId,
+         ref: CollectionConstants.SPECIALIZATION,
+         index: true,
+      },
    },
    {
       versionKey: false,

@@ -24,6 +24,30 @@ export const SalaryLogSwagger = {
                      in: 'query',
                      schema: { type: 'string' },
                   },
+                  {
+                     name: 'department_id',
+                     in: 'query',
+                     schema: { type: 'string' },
+                     description: 'Bo`lim ID bo`yicha filter',
+                  },
+                  {
+                     name: 'specialization_id',
+                     in: 'query',
+                     schema: { type: 'string' },
+                     description: 'Mutaxassislik ID bo`yicha filter',
+                  },
+                  {
+                     name: 'start_date',
+                     in: 'query',
+                     schema: { type: 'string', format: 'date' },
+                     description: 'Boshlanish sanasi (YYYY-MM-DD)',
+                  },
+                  {
+                     name: 'end_date',
+                     in: 'query',
+                     schema: { type: 'string', format: 'date' },
+                     description: 'Tugash sanasi (YYYY-MM-DD)',
+                  },
                ],
                responses: {
                   '200': {

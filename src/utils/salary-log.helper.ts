@@ -17,6 +17,8 @@ interface SalaryLogAggregateI {
    worker_id: Types.ObjectId
    worker_fullname: string
    worker_type: SalaryWorkerType
+   department_id?: Types.ObjectId
+   specialization_id?: Types.ObjectId
    salary_month: string
    month_date: Date
    all_patient_count: number
@@ -67,6 +69,8 @@ const addAggregate = ({
    worker_id,
    worker_fullname,
    worker_type,
+   department_id,
+   specialization_id,
    salary_month,
    month_date,
    amount,
@@ -77,6 +81,8 @@ const addAggregate = ({
    worker_id: Types.ObjectId
    worker_fullname: string
    worker_type: SalaryWorkerType
+   department_id?: Types.ObjectId
+   specialization_id?: Types.ObjectId
    salary_month: string
    month_date: Date
    amount: number
@@ -88,6 +94,8 @@ const addAggregate = ({
       worker_id,
       worker_fullname,
       worker_type,
+      department_id,
+      specialization_id,
       salary_month,
       month_date,
       all_patient_count: 0,
@@ -145,7 +153,9 @@ const performSalarySync = async (date: Date): Promise<void> => {
          : [],
       allWorkerIds.length
          ? WorkerModel.find({ _id: { $in: allWorkerIds } })
-              .select('_id fullname worker_type')
+              .select(
+                 '_id fullname worker_type department_id specialization_id',
+              )
               .lean()
               .exec()
          : [],
@@ -177,6 +187,8 @@ const performSalarySync = async (date: Date): Promise<void> => {
                worker_id: patient.doctor,
                worker_fullname: doctor.fullname,
                worker_type: 'doctor',
+               department_id: doctor.department_id,
+               specialization_id: doctor.specialization_id,
                salary_month,
                month_date,
                amount: patient.amount,

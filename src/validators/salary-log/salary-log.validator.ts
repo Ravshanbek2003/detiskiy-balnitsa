@@ -23,6 +23,26 @@ export class SalaryLogValidator {
          .optional()
          .isMongoId()
          .withMessage("Xodim ID noto'g'ri formatda."),
+
+      query('department_id')
+         .optional()
+         .isMongoId()
+         .withMessage("Department ID noto'g'ri formatda."),
+
+      query('specialization_id')
+         .optional()
+         .isMongoId()
+         .withMessage("Specialization ID noto'g'ri formatda."),
+
+      query('start_date')
+         .optional()
+         .isISO8601()
+         .withMessage("Boshlanish sanasi (start_date) noto'g'ri formatda."),
+
+      query('end_date')
+         .optional()
+         .isISO8601()
+         .withMessage("Tugash sanasi (end_date) noto'g'ri formatda."),
    ]
 
    public static mongoId = () => [

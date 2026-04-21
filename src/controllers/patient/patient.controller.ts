@@ -5,12 +5,14 @@ import {
    LogModel,
    PatientDocumentI,
    PatientModel,
+   SalaryLogNurseModel,
    SpecializationModel,
    WorkerModel,
 } from '../../models'
 import {
    HttpException,
    asyncHandler,
+   syncNurseSalaryLogsForMonth,
    syncSalaryLogsForMonth,
 } from '../../utils'
 import { regexEscape } from '../../utils/regex-escape'
@@ -26,8 +28,6 @@ export class PatientController {
          specialization_name,
          doctor,
          doctor_name,
-         nurse,
-         nurse_name,
          amount,
          payment_method,
          payment_status,
@@ -80,33 +80,11 @@ export class PatientController {
          }
       }
 
-      if (nurse) {
-         const nurseDoc = await WorkerModel.findOne({
-            _id: nurse,
-            worker_type: { $in: ['nurse', 'assistant_nurse'] },
-         }).lean()
-         if (!nurseDoc) {
-            throw new HttpException(
-               StatusCodes.NOT_FOUND,
-               ReasonPhrases.NOT_FOUND,
-               'Hamshira topilmadi!',
-            )
-         }
-      }
-
       // Concurrent: Create patient va increment worker patient counts
       const updatePromises: Promise<any>[] = []
       if (doctor) {
          updatePromises.push(
             WorkerModel.findByIdAndUpdate(doctor, {
-               $inc: { today_patients_count: 1 },
-               $set: { last_patient_at: new Date() },
-            }).exec(),
-         )
-      }
-      if (nurse) {
-         updatePromises.push(
-            WorkerModel.findByIdAndUpdate(nurse, {
                $inc: { today_patients_count: 1 },
                $set: { last_patient_at: new Date() },
             }).exec(),
@@ -123,8 +101,6 @@ export class PatientController {
          specialization_name,
          doctor,
          doctor_name,
-         nurse,
-         nurse_name,
          amount,
          payment_method,
          payment_status,
@@ -137,6 +113,7 @@ export class PatientController {
 
       // Fire-and-forget salary log sync (debounced, non-blocking)
       syncSalaryLogsForMonth(patient.created_at)
+      syncNurseSalaryLogsForMonth(patient.created_at)
 
       res.status(StatusCodes.CREATED).json({
          success: true,
@@ -250,8 +227,6 @@ export class PatientController {
          specialization_name,
          doctor,
          doctor_name,
-         nurse,
-         nurse_name,
          amount,
          payment_method,
          payment_status,
@@ -269,7 +244,6 @@ export class PatientController {
       }
 
       const previousDoctor = patient.doctor?.toString()
-      const previousNurse = patient.nurse?.toString()
       const salaryLogMonthDate = patient.created_at
 
       if (check_number && check_number !== patient.check_number) {
@@ -321,20 +295,6 @@ export class PatientController {
          }
       }
 
-      if (nurse) {
-         const nurseDoc = await WorkerModel.findOne({
-            _id: nurse,
-            worker_type: { $in: ['nurse', 'assistant_nurse'] },
-         }).lean()
-         if (!nurseDoc) {
-            throw new HttpException(
-               StatusCodes.NOT_FOUND,
-               ReasonPhrases.NOT_FOUND,
-               'Hamshira topilmadi!',
-            )
-         }
-      }
-
       Object.assign(patient, {
          ...(full_name !== undefined && { full_name }),
          ...(check_number !== undefined && { check_number }),
@@ -344,8 +304,6 @@ export class PatientController {
          ...(specialization_name !== undefined && { specialization_name }),
          ...(doctor !== undefined && { doctor }),
          ...(doctor_name !== undefined && { doctor_name }),
-         ...(nurse !== undefined && { nurse }),
-         ...(nurse_name !== undefined && { nurse_name }),
          ...(amount !== undefined && { amount }),
          ...(payment_method !== undefined && { payment_method }),
          ...(payment_status !== undefined && { payment_status }),
@@ -375,31 +333,12 @@ export class PatientController {
          }
       }
 
-      if (nurse !== undefined && previousNurse !== nurse?.toString()) {
-         // Eski hamshira sanini kamaytir
-         if (previousNurse) {
-            updatePromises.push(
-               WorkerModel.findByIdAndUpdate(previousNurse, {
-                  $inc: { today_patients_count: -1 },
-               }).exec(),
-            )
-         }
-         // Yangi hamshira sanini oshir
-         if (nurse) {
-            updatePromises.push(
-               WorkerModel.findByIdAndUpdate(nurse, {
-                  $inc: { today_patients_count: 1 },
-                  $set: { last_patient_at: new Date() },
-               }).exec(),
-            )
-         }
-      }
-
       await patient.save()
       await Promise.all(updatePromises)
 
       // Fire-and-forget salary log sync (debounced, non-blocking)
       syncSalaryLogsForMonth(salaryLogMonthDate)
+      syncNurseSalaryLogsForMonth(salaryLogMonthDate)
 
       res.status(StatusCodes.OK).json({
          success: true,
@@ -430,6 +369,7 @@ export class PatientController {
 
       // Fire-and-forget salary log sync (debounced, non-blocking)
       syncSalaryLogsForMonth(patient.created_at)
+      syncNurseSalaryLogsForMonth(patient.created_at)
 
       res.status(StatusCodes.OK).json({
          success: true,
@@ -458,6 +398,7 @@ export class PatientController {
 
       // Fire-and-forget salary log sync (debounced, non-blocking)
       syncSalaryLogsForMonth(patient.created_at)
+      syncNurseSalaryLogsForMonth(patient.created_at)
 
       res.status(StatusCodes.OK).json({
          success: true,

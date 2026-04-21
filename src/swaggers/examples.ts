@@ -117,8 +117,6 @@ export const SwaggerExamples = {
                specialization_name: 'EKO kardiologiya',
                doctor: '64b8f1a2c3d4e5f6a7b8c9f3',
                doctor_name: 'Dr. Qodirov',
-               nurse: '64b8f1a2c3d4e5f6a7b8c9f4',
-               nurse_name: 'Hamshira Guli',
                amount: 250000,
                payment_method: 'card',
                country: 'UZB',
@@ -146,7 +144,7 @@ export const SwaggerExamples = {
             department_name: 'Kardiologiya',
             specialization_name: 'EKO kardiologiya',
             doctor_name: 'Dr. Qodirov',
-            nurse_name: 'Hamshira Guli',
+
             amount: 250000,
             payment_method: 'card',
             country: 'UZB',

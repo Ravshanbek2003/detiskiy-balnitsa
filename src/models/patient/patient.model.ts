@@ -21,8 +21,6 @@ export interface PatientDocumentI {
    specialization_name?: string //yo'nalish nomi
    doctor?: Types.ObjectId
    doctor_name?: string
-   nurse?: Types.ObjectId
-   nurse_name?: string
    amount: number
    country: 'UZB' | 'OTHERS'
    payment_method: PatientPaymentMethodType
@@ -51,8 +49,6 @@ const documentSchema = new Schema<PatientDocumentI>(
       specialization_name: { type: String },
       doctor: { type: Schema.Types.ObjectId, ref: CollectionConstants.WORKER },
       doctor_name: { type: String },
-      nurse: { type: Schema.Types.ObjectId, ref: CollectionConstants.WORKER },
-      nurse_name: { type: String },
       amount: { type: Number, required: true },
       payment_method: {
          type: String,

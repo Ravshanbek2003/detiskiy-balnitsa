@@ -51,17 +51,6 @@ export class PatientValidator {
          .isString()
          .withMessage("Shifokor ismi matn bo\\'lishi kerak."),
 
-      body('nurse')
-         .optional()
-         .isMongoId()
-         .withMessage("Hamshira ID noto\\'g\\'ri formatda."),
-
-      body('nurse_name')
-         .optional()
-         .trim()
-         .isString()
-         .withMessage("Hamshira ismi matn bo\\'lishi kerak."),
-
       body('amount')
          .notEmpty()
          .withMessage("To'lov summasi kiritilishi shart.")
@@ -143,17 +132,6 @@ export class PatientValidator {
          .trim()
          .isString()
          .withMessage("Shifokor ismi matn bo\\'lishi kerak."),
-
-      body('nurse')
-         .optional()
-         .isMongoId()
-         .withMessage("Hamshira ID noto\\'g\\'ri formatda."),
-
-      body('nurse_name')
-         .optional()
-         .trim()
-         .isString()
-         .withMessage("Hamshira ismi matn bo\\'lishi kerak."),
 
       body('amount')
          .optional()
