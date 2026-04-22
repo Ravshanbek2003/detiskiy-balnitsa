@@ -41,7 +41,7 @@ export class MainController {
             },
             {
                $lookup: {
-                  from: 'users',
+                  from: 'user',
                   localField: '_id',
                   foreignField: '_id',
                   as: 'cashier_info',
