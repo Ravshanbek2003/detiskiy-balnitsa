@@ -21,7 +21,7 @@ export interface WorkerDocumentI {
 const documentSchema = new Schema<WorkerDocumentI>(
    {
       fullname: { type: String, required: true, trim: true },
-      phone: { type: String, required: true, unique: true, trim: true },
+      phone: { type: String },
       image: { type: String, trim: true },
       department_id: {
          type: Schema.Types.ObjectId,

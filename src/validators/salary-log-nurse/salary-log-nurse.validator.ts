@@ -9,7 +9,7 @@ export class SalaryLogNurseValidator {
 
       query('limit')
          .optional()
-         .isInt({ min: 1, max: 100 })
+         .isInt({ min: 1, max: 1000 })
          .withMessage("Limit 1 dan 100 gacha bo\\'lishi kerak."),
 
       query('department_id')

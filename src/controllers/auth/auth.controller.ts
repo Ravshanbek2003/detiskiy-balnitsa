@@ -118,6 +118,7 @@ export class AuthController {
          role: RoleConstants.ACCOUNTANT,
          password: hashedPassword,
          status: StatusConstants.ACTIVE,
+         roleType: 'primary',
       })
 
       res.status(StatusCodes.CREATED).json({
@@ -127,7 +128,6 @@ export class AuthController {
    })
 
    public static getMe = asyncHandler(async (req, res) => {
-      
       res.status(StatusCodes.OK).json({ success: true, data: req.user })
    })
 

@@ -11,6 +11,7 @@ export interface UserDocumentI {
    role: RoleConstantsType
    login: string
    password: string
+   roleType?: 'primary' | 'secondary'
    status: 'active' | 'blocked' | 'deleted'
    readonly created_at: Date
    readonly updated_at: Date
@@ -32,6 +33,11 @@ const documentSchema = new Schema<UserDocumentI>(
          required: true,
          enum: ['active', 'blocked', 'deleted'],
          default: 'active',
+      },
+      roleType: {
+         type: String,
+         enum: ['primary', 'secondary'],
+         default: 'secondary',
       },
       image: { type: String },
    },

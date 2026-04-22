@@ -168,8 +168,8 @@ export class PatientValidator {
 
       query('limit')
          .optional()
-         .isInt({ min: 1, max: 100 })
-         .withMessage("Limit 1 dan 100 gacha bo\\'lishi kerak."),
+         .isInt({ min: 1, max: 1000 })
+         .withMessage("Limit 1 dan 1000 gacha bo\\'lishi kerak."),
 
       query('search')
          .optional()

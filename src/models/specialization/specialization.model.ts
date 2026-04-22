@@ -21,8 +21,8 @@ export interface SpecializationDocumentI {
 
 const documentSchema = new Schema<SpecializationDocumentI>(
    {
-      service_code: { type: String, trim: true },
-      name: { type: String, required: true, trim: true },
+      service_code: { type: String },
+      name: { type: String, required: true },
       department_id: {
          type: Schema.Types.ObjectId, // Schema.Types.ObjectId ishlatish aniqroq
          ref: CollectionConstants.DEPARTMENT,
