@@ -303,11 +303,20 @@ export class MainController {
                nurse_name: {
                   $concat: ['$department_name', " (Hamshiralar bo'limi)"],
                },
+               nurse_income: 1,
+               assistant_income: 1,
                total_income: { $add: ['$nurse_income', '$assistant_income'] },
                patients_count: 1,
             },
          },
-         { $match: { total_income: { $gt: 0 } } },
+         {
+            $match: {
+               $or: [
+                  { nurse_income: { $gt: 0 } },
+                  { assistant_income: { $gt: 0 } },
+               ],
+            },
+         },
          { $sort: { total_income: -1 } },
       ])
 
