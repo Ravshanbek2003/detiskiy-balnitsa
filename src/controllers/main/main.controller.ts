@@ -277,17 +277,37 @@ export class MainController {
             $match: {
                created_at: { $gte: start, $lte: end },
                payment_status: 'paid',
-               nurse: { $exists: true, $ne: null },
             },
          },
          {
             $group: {
-               _id: '$nurse',
-               nurse_name: { $first: '$nurse_name' },
-               total_income: { $sum: '$amount' },
+               _id: '$department_id',
+               department_name: { $first: '$department_name' },
+               nurse_income: {
+                  $sum: { $ifNull: ['$department_share_percentages.nurse', 0] },
+               },
+               assistant_income: {
+                  $sum: {
+                     $ifNull: [
+                        '$department_share_percentages.assistant_nurse',
+                        0,
+                     ],
+                  },
+               },
                patients_count: { $sum: 1 },
             },
          },
+         {
+            $project: {
+               _id: 1,
+               nurse_name: {
+                  $concat: ['$department_name', " (Hamshiralar bo'limi)"],
+               },
+               total_income: { $add: ['$nurse_income', '$assistant_income'] },
+               patients_count: 1,
+            },
+         },
+         { $match: { total_income: { $gt: 0 } } },
          { $sort: { total_income: -1 } },
       ])
 
