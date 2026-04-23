@@ -12,7 +12,7 @@ export class WorkerValidator {
       body('phone')
          .trim()
          .notEmpty()
-         .withMessage("Telefon raqami kiritilishi shart.")
+         .withMessage('Telefon raqami kiritilishi shart.')
          .isString()
          .withMessage("Telefon raqami matn bo'lishi kerak.")
          .matches(/^\+998\d{9}$/)
@@ -32,17 +32,19 @@ export class WorkerValidator {
 
       body('specialization_id')
          .trim()
-         .notEmpty()
-         .withMessage("Mutaxassislik kiritilishi shart.")
+         .optional()
+         .isString()
          .isMongoId()
          .withMessage("Mutaxassislik ID noto'g'ri formatda."),
 
       body('worker_type')
          .trim()
          .notEmpty()
-         .withMessage("Xodim turi kiritilishi shart.")
+         .withMessage('Xodim turi kiritilishi shart.')
          .isIn(['doctor', 'nurse', 'assistant_nurse'])
-         .withMessage("Xodim turi: 'doctor', 'nurse' yoki 'assistant_nurse' bo'lishi kerak."),
+         .withMessage(
+            "Xodim turi: 'doctor', 'nurse' yoki 'assistant_nurse' bo'lishi kerak.",
+         ),
 
       body('notes')
          .optional()
@@ -54,7 +56,7 @@ export class WorkerValidator {
       param('id')
          .trim()
          .notEmpty()
-         .withMessage("ID kiritilishi shart.")
+         .withMessage('ID kiritilishi shart.')
          .isMongoId()
          .withMessage("ID noto'g'ri formatda."),
 
@@ -99,7 +101,9 @@ export class WorkerValidator {
          .trim()
          .notEmpty()
          .isIn(['doctor', 'nurse', 'assistant_nurse'])
-         .withMessage("Xodim turi: 'doctor', 'nurse' yoki 'assistant_nurse' bo'lishi kerak."),
+         .withMessage(
+            "Xodim turi: 'doctor', 'nurse' yoki 'assistant_nurse' bo'lishi kerak.",
+         ),
 
       body('notes')
          .optional()

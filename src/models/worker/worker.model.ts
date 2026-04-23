@@ -8,7 +8,7 @@ export interface WorkerDocumentI {
    phone: string
    image?: string
    department_id: Types.ObjectId
-   specialization_id: Types.ObjectId
+   specialization_id?: Types.ObjectId
    worker_type: 'doctor' | 'nurse' | 'assistant_nurse'
    today_patients_count: number
    last_patient_at?: Date
@@ -31,7 +31,6 @@ const documentSchema = new Schema<WorkerDocumentI>(
       specialization_id: {
          type: Schema.Types.ObjectId,
          ref: CollectionConstants.SPECIALIZATION,
-         required: true,
       },
       worker_type: {
          type: String,

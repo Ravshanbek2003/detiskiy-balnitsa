@@ -44,7 +44,7 @@ export class WorkerController {
          )
       }
 
-      if (!specialization) {
+      if (worker_type === 'doctor' && !specialization) {
          throw new HttpException(
             StatusCodes.NOT_FOUND,
             ReasonPhrases.NOT_FOUND,
