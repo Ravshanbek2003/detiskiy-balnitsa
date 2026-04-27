@@ -11,6 +11,7 @@ export interface DepartmentDocumentI {
       assistant_nurse: number
    }
    description?: string
+   departmentType?: 'primary' | 'secondary'
    is_active: boolean
    readonly created_at: Date
    readonly updated_at: Date
@@ -24,6 +25,7 @@ const documentSchema = new Schema<DepartmentDocumentI>(
          assistant_nurse: { type: Number, default: 0, min: 0 },
       },
       description: { type: String },
+      departmentType: { type: String, enum: ['primary', 'secondary'] , default: 'secondary' },
       is_active: { type: Boolean, default: true },
    },
    {

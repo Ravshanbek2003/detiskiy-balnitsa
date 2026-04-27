@@ -307,5 +307,70 @@ export const DepartmentSwagger = {
             },
          },
       },
+      {
+         path: 'get-primary',
+         body: {
+            get: {
+               tags: ['Department'],
+               summary:
+                  "Asosiy (primary) bo'limni ko'rish — Ruxsat: ACCOUNTANT, CASHIER",
+               responses: {
+                  '200': {
+                     description: "Asosiy bo'lim topildi",
+                  },
+                  '404': {
+                     description: "Asosiy bo'lim topilmadi",
+                  },
+               },
+            },
+         },
+      },
+      {
+         path: 'change-type/{id}',
+         body: {
+            patch: {
+               tags: ['Department'],
+               summary:
+                  "Bo'lim turini (primary/secondary) o'zgartirish — Ruxsat: ACCOUNTANT",
+               parameters: [
+                  {
+                     name: 'id',
+                     in: 'path',
+                     required: true,
+                     schema: { type: 'string' },
+                  },
+               ],
+               requestBody: {
+                  required: true,
+                  content: {
+                     'application/json': {
+                        schema: {
+                           type: 'object',
+                           properties: {
+                              departmentType: {
+                                 type: 'string',
+                                 enum: ['primary', 'secondary'],
+                                 example: 'primary',
+                              },
+                           },
+                           required: ['departmentType'],
+                        },
+                     },
+                  },
+               },
+               responses: {
+                  '200': {
+                     description: "Bo'lim turi muvaffaqiyatli o'zgartirildi",
+                  },
+                  '400': {
+                     description: 'Validatsiya xatoligi',
+                  },
+                  '404': {
+                     description: "Bo'lim topilmadi",
+                  },
+               },
+            },
+         },
+      },
    ],
 }

@@ -189,6 +189,59 @@ export class DepartmentController {
       })
    })
 
+   public static changeType = asyncHandler(async (req, res) => {
+      const { id } = req.params as any
+      const { departmentType } = req.body as {
+         departmentType: 'primary' | 'secondary'
+      }
+
+      const department = await DepartmentModel.findById(id).exec()
+
+      if (!department) {
+         throw new HttpException(
+            StatusCodes.NOT_FOUND,
+            ReasonPhrases.NOT_FOUND,
+            "Bo'lim topilmadi",
+         )
+      }
+
+      if (departmentType === 'primary') {
+         // Demote existing primary department to secondary
+         await DepartmentModel.updateMany(
+            { departmentType: 'primary' },
+            { $set: { departmentType: 'secondary' } },
+         )
+      }
+
+      department.departmentType = departmentType
+      await department.save()
+
+      res.status(StatusCodes.OK).json({
+         success: true,
+         message: "Bo'lim turi muvaffaqiyatli o'zgartirildi",
+         data: department,
+      })
+   })
+
+   public static getPrimary = asyncHandler(async (req, res) => {
+      const department = await DepartmentModel.findOne({
+         departmentType: 'primary',
+      })
+         .lean()
+         .exec()
+
+      // Primary bo'lim topilmasa, null yoki maxsus javob qaytarish mumkin
+      // if (!department) {
+      //    throw new HttpException(
+      //       StatusCodes.NOT_FOUND,
+      //       ReasonPhrases.NOT_FOUND,
+      //       "Asosiy bo'lim topilmadi",
+      //    )
+      // }
+
+      res.status(StatusCodes.OK).json({ success: true, data: department })
+   })
+
    public static activate = asyncHandler(async (req, res) => {
       const { id } = req.params as any
 

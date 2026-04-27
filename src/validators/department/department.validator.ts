@@ -101,6 +101,24 @@ export class DepartmentValidator {
          .withMessage("Faollik holati mantiqiy (boolean) bo\\'lishi kerak."),
    ]
 
+   public static changeType = () => [
+      param('id')
+         .trim()
+         .notEmpty()
+         .withMessage("Bo\\'lim ID kiritilishi shart.")
+         .isMongoId()
+         .withMessage("Bo\\'lim ID noto\\'g\\'ri formatda."),
+
+      body('departmentType')
+         .trim()
+         .notEmpty()
+         .withMessage("Bo\\'lim turi (departmentType) kiritilishi shart.")
+         .isIn(['primary', 'secondary'])
+         .withMessage(
+            "Bo\\'lim turi 'primary' yoki 'secondary' bo\\'lishi kerak.",
+         ),
+   ]
+
    public static getAll = () => [
       query('page')
          .optional()

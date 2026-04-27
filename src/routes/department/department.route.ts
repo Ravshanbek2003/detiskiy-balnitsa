@@ -25,10 +25,26 @@ departmentRouter.put(
    DepartmentController.update,
 )
 
+departmentRouter.patch(
+   '/change-type/:id',
+   authMiddleware,
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   DepartmentValidator.changeType(),
+   validate,
+   DepartmentController.changeType,
+)
+
+departmentRouter.get(
+   '/get-primary',
+   authMiddleware,
+   roleMiddleware([RoleConstants.ACCOUNTANT, RoleConstants.CASHIER]),
+   DepartmentController.getPrimary,
+)
+
 departmentRouter.get(
    '/get-all',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.ACCOUNTANT, RoleConstants.CASHIER]),
    DepartmentValidator.getAll(),
    validate,
    DepartmentController.getAll,
@@ -37,7 +53,7 @@ departmentRouter.get(
 departmentRouter.get(
    '/get-one/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.ACCOUNTANT, RoleConstants.CASHIER]),
    DepartmentValidator.mongoId(),
    validate,
    DepartmentController.getById,
@@ -51,7 +67,6 @@ departmentRouter.delete(
    validate,
    DepartmentController.delete,
 )
-
 
 departmentRouter.patch(
    '/activate/:id',
