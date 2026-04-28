@@ -128,6 +128,49 @@ export const SpecializationSwagger = {
          },
       },
       {
+         path: 'seed-data',
+         body: {
+            post: {
+               tags: ['Specialization'],
+               summary:
+                  "Ma'lumotlarni baza bo'lmasa to'ldiriladi — Ruxsat: ACCOUNTANT",
+               description:
+                  "47 ta yo'nalish ma'lumotini bazaga qo'shadi (seed data)",
+               responses: {
+                  '201': {
+                     description: "Seed data muvaffaqiyatli qo'shildi",
+                     content: {
+                        'application/json': {
+                           example: {
+                              success: true,
+                              message:
+                                 "47 ta yo'nalish muvaffaqiyatli qo'shildi",
+                              count: 47,
+                           },
+                        },
+                     },
+                  },
+                  '401': {
+                     description: 'Autentifikatsiya xatoligi',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.unauthorized,
+                        },
+                     },
+                  },
+                  '403': {
+                     description: 'Ruxsat berilmagan',
+                     content: {
+                        'application/json': {
+                           example: SwaggerExamples.errors.forbidden,
+                        },
+                     },
+                  },
+               },
+            },
+         },
+      },
+      {
          path: 'get-one/{id}',
          body: {
             get: {

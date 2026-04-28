@@ -28,16 +28,23 @@ specializationRouter.put(
 specializationRouter.get(
    '/get-all',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.ACCOUNTANT, RoleConstants.CASHIER]),
    SpecializationValidator.getAll(),
    validate,
    SpecializationController.getAll,
 )
 
+specializationRouter.post(
+   '/seed-data',
+   authMiddleware,
+   roleMiddleware([RoleConstants.ACCOUNTANT]),
+   SpecializationController.seedData,
+)
+
 specializationRouter.get(
    '/get-one/:id',
    authMiddleware,
-   roleMiddleware([RoleConstants.ACCOUNTANT,RoleConstants.CASHIER]),
+   roleMiddleware([RoleConstants.ACCOUNTANT, RoleConstants.CASHIER]),
    SpecializationValidator.mongoId(),
    validate,
    SpecializationController.getById,
