@@ -1,7 +1,7 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
 import { ErrorMessages, SuccessMessages } from '../../constants'
-import { DepartmentDocumentI, DepartmentModel } from '../../models'
+import { DepartmentDocumentI, DepartmentModel, SpecializationModel } from '../../models'
 import { HttpException, asyncHandler } from '../../utils'
 import { regexEscape } from '../../utils/regex-escape'
 
@@ -170,7 +170,7 @@ export class DepartmentController {
          )
       }
 
-      const specializationCount = await DepartmentModel.countDocuments({
+      const specializationCount = await SpecializationModel.countDocuments({
          department_id: id,
       }).exec()
       if (specializationCount > 0) {
